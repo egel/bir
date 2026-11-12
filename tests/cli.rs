@@ -38,15 +38,15 @@ fn end_to_end_resize_in_place() {
         String::from_utf8_lossy(&out.stderr)
     );
 
-    for width in [200, 400, 800] {
-        let p = dir.join(format!("photo_w{width}.png"));
+    for size in [200, 400, 800] {
+        let p = dir.join(format!("photo_x{size}.png"));
         assert!(p.exists(), "{} missing", p.display());
     }
     // aspect ratio preserved
-    let (w, h) = imaging::image_dimensions(&dir.join("photo_w200.png")).unwrap();
+    let (w, h) = imaging::image_dimensions(&dir.join("photo_x200.png")).unwrap();
     assert_eq!((w, h), (200, 150));
     // no upscale for the 100px-wide input
-    let (w, h) = imaging::image_dimensions(&dir.join("wide_w400.png")).unwrap();
+    let (w, h) = imaging::image_dimensions(&dir.join("wide_x400.png")).unwrap();
     assert_eq!((w, h), (100, 50));
 }
 
@@ -94,12 +94,12 @@ fn output_dir_and_format_conversion() {
         String::from_utf8_lossy(&res.stderr)
     );
 
-    let converted = out.join("photo_w100.webp");
+    let converted = out.join("photo_x100.webp");
     assert!(converted.exists());
     let (w, h) = imaging::image_dimensions(&converted).unwrap();
     assert_eq!((w, h), (100, 75));
     // originals directory untouched by the conversion
-    assert!(!dir.join("photo_w100.webp").exists());
+    assert!(!dir.join("photo_x100.webp").exists());
 }
 
 #[test]
@@ -118,15 +118,26 @@ fn missing_dir_and_empty_dir_exit_nonzero() {
 fn previous_run_outputs_are_not_sources() {
     let dir = std::env::temp_dir().join(format!("bir-cli-5-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
-    make_images(&dir, &[("old_w200.png", 200, 120), ("real.png", 400, 300)]);
+    make_images(
+        &dir,
+        &[
+            ("old_x200.png", 200, 120),
+            ("legacy_w200.png", 200, 120), // legacy width-based output
+            ("real.png", 400, 300),
+        ],
+    );
 
     let out = run_bir(&[dir.to_str().unwrap()]);
     assert_eq!(code(&out), 0);
     let stdout = String::from_utf8_lossy(&out.stdout);
     assert!(
-        !stdout.contains("old_w200.png ->"),
+        !stdout.contains("old_x200.png ->"),
         "old output was reprocessed: {stdout}"
     );
-    // configured-width outputs are still produced for the real source
-    assert!(dir.join("real_w200.png").exists());
+    assert!(
+        !stdout.contains("legacy_w200.png ->"),
+        "legacy output was reprocessed: {stdout}"
+    );
+    // configured-size outputs are still produced for the real source
+    assert!(dir.join("real_x200.png").exists());
 }

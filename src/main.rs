@@ -9,7 +9,7 @@ use bir::imaging::{self, OutputSpec};
 
 /// Bir - bulk image resizer.
 ///
-/// Recursively finds images in a directory and creates width-based resized
+/// Recursively finds images in a directory and creates longest-side resized
 /// copies, optionally converting them to another format.
 #[derive(Parser, Debug)]
 #[command(name = "bir", version, about)]
@@ -17,7 +17,7 @@ struct Cli {
     /// Directory containing the images to process.
     input_dir: PathBuf,
 
-    /// Comma-separated target widths, e.g. 200,400,800.
+    /// Comma-separated target sizes for the longest side, e.g. 200,400,800.
     #[arg(short, long, value_delimiter = ',', default_values_t = vec![200u32, 400, 800])]
     resolutions: Vec<u32>,
 
@@ -58,8 +58,8 @@ fn main() -> Result<()> {
     let mut failed = 0u32;
 
     for file in &files {
-        for width in &cli.resolutions {
-            let spec = build_output_spec(file, *width, &cli);
+        for size in &cli.resolutions {
+            let spec = build_output_spec(file, *size, &cli);
 
             if spec.path.exists() && !cli.force {
                 eprintln!("Skipping (exists): {}", spec.path.display());
@@ -96,10 +96,10 @@ fn main() -> Result<()> {
 
 /// Compute the destination path and conversion settings for one output.
 ///
-/// Naming mirrors `bir.sh`: `<stem>_w<width>.<ext>` next to the original, or
+/// Naming mirrors `bir.sh`: `<stem>_x<size>.<ext>` next to the original, or
 /// inside `--output-dir` when given. The extension is `--format` when set,
 /// otherwise the original file's extension.
-fn build_output_spec(input: &Path, width: u32, cli: &Cli) -> OutputSpec {
+fn build_output_spec(input: &Path, size: u32, cli: &Cli) -> OutputSpec {
     let stem = input
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
@@ -118,8 +118,8 @@ fn build_output_spec(input: &Path, width: u32, cli: &Cli) -> OutputSpec {
         .unwrap_or_else(|| input.parent().map(Path::to_path_buf).unwrap_or_default());
 
     OutputSpec {
-        width,
-        path: dir.join(format!("{stem}_w{width}.{ext}")),
+        size,
+        path: dir.join(format!("{stem}_x{size}.{ext}")),
         format: cli.format.clone(),
         quality: cli.quality,
     }

@@ -2,7 +2,8 @@
 //!
 //! Matches the reference `bir.sh` behavior: find JPG/JPEG/PNG/BMP/TIF/TIFF
 //! files (case-insensitive), recursively, while skipping outputs produced by
-//! previous runs (`<stem>_w<N>.<ext>` for every configured width).
+//! previous runs (`<stem>_x<N>.<ext>` for every configured size, plus the
+//! legacy width-based `<stem>_w<N>.<ext>`).
 
 use std::path::{Path, PathBuf};
 
@@ -22,15 +23,15 @@ pub enum DiscoverError {
     NoImages { path: PathBuf },
 }
 
-/// Find source images in `dir` that should be resized to the given widths.
+/// Find source images in `dir` that should be resized to the given sizes.
 ///
-/// A file is excluded when its stem ends in `_w<N>` for any of the
-/// configured `widths` — those are outputs of previous runs, regardless of
-/// their extension (so e.g. `photo_w200.webp` is skipped even when the source
-/// extension filter is jpg/png only).
+/// A file is excluded when its stem ends in `_x<N>` or the legacy `_w<N>` for
+/// any of the configured `sizes` — those are outputs of previous runs,
+/// regardless of their extension (so e.g. `photo_x200.webp` is skipped even
+/// when the source extension filter is jpg/png only).
 pub fn find_images(
     dir: &Path,
-    widths: &[u32],
+    sizes: &[u32],
     recursive: bool,
 ) -> Result<Vec<PathBuf>, DiscoverError> {
     if !dir.is_dir() {
@@ -50,7 +51,7 @@ pub fn find_images(
             path: dir.to_path_buf(),
             message: e.to_string(),
         })?;
-        if is_source_image(&entry, widths) {
+        if is_source_image(&entry, sizes) {
             files.push(entry.into_path());
         }
     }
@@ -64,7 +65,7 @@ pub fn find_images(
     Ok(files)
 }
 
-fn is_source_image(entry: &DirEntry, widths: &[u32]) -> bool {
+fn is_source_image(entry: &DirEntry, sizes: &[u32]) -> bool {
     if !entry.file_type().is_file() {
         return false;
     }
@@ -77,7 +78,12 @@ fn is_source_image(entry: &DirEntry, widths: &[u32]) -> bool {
         return false;
     }
     let stem = &name[..dot];
-    !widths.iter().any(|w| stem.ends_with(&format!("_w{w}")))
+    let is_output = |prefix: &str| {
+        sizes
+            .iter()
+            .any(|s| stem.ends_with(&format!("{prefix}{s}")))
+    };
+    !(is_output("_x") || is_output("_w"))
 }
 
 #[cfg(test)]
@@ -119,18 +125,19 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("bir-disc-2-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         touch(&dir, "photo.jpg");
-        touch(&dir, "photo_w200.jpg");
-        touch(&dir, "photo_w400.jpg");
-        touch(&dir, "photo_w800.jpg");
-        touch(&dir, "photo_w200.webp");
-        touch(&dir, "photo_w999.jpg"); // not a configured width — kept
+        touch(&dir, "photo_x200.jpg");
+        touch(&dir, "photo_x400.jpg");
+        touch(&dir, "photo_x800.jpg");
+        touch(&dir, "photo_x200.webp");
+        touch(&dir, "photo_w200.jpg"); // legacy width-based output — skipped
+        touch(&dir, "photo_x999.jpg"); // not a configured size — kept
 
         let found = find_images(&dir, &[200, 400, 800], true).unwrap();
         let names: Vec<String> = found
             .iter()
             .map(|p| p.file_name().unwrap().to_string_lossy().into_owned())
             .collect();
-        assert_eq!(names, vec!["photo.jpg", "photo_w999.jpg"]);
+        assert_eq!(names, vec!["photo.jpg", "photo_x999.jpg"]);
     }
 
     #[test]

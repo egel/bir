@@ -18,9 +18,10 @@ include!(concat!(env!("OUT_DIR"), "/magickwand_bindings.rs"));
 /// Specification of a single resized output for one input file.
 #[derive(Debug, Clone)]
 pub struct OutputSpec {
-    /// Target width in pixels. Height is derived from the aspect ratio.
-    pub width: u32,
-    /// Full destination path, e.g. `<dir>/<stem>_w200.png`.
+    /// Target size in pixels for the longest side. The shorter side is
+    /// derived from the aspect ratio.
+    pub size: u32,
+    /// Full destination path, e.g. `<dir>/<stem>_x200.png`.
     pub path: PathBuf,
     /// Output format/extension override (e.g. "webp"). None keeps the input format.
     pub format: Option<String>,
@@ -32,8 +33,8 @@ pub struct OutputSpec {
 pub enum ImagingError {
     #[error("cannot open {path}: {message}")]
     Read { path: PathBuf, message: String },
-    #[error("cannot resize to width {width}: {message}")]
-    Resize { width: u32, message: String },
+    #[error("cannot resize to size {size}: {message}")]
+    Resize { size: u32, message: String },
     #[error("cannot write {path}: {message}")]
     Write { path: PathBuf, message: String },
 }
@@ -66,8 +67,9 @@ unsafe fn take_exception(wand: *mut MagickWand) -> String {
 
 /// Resize `input` and write the result to `spec.path`.
 ///
-/// Mirrors `magick -resize <N>x`: fit to the requested width, preserve the
-/// aspect ratio, never upscale (images narrower than the requested width are
+/// Mirrors `magick -resize <N>x<N>>`: fit within an `<N>x<N>` box so the
+/// longest side equals the requested size, preserve the aspect ratio, never
+/// upscale (images with both sides smaller than the requested size are
 /// written unchanged).
 pub fn resize_file(input: &Path, spec: &OutputSpec) -> Result<(), ImagingError> {
     ensure_genesis();
@@ -116,14 +118,22 @@ unsafe fn run_resize(
             });
         }
 
-        // No-upscale: `magick -resize 200x` leaves narrower images untouched.
-        let (new_width, new_height) = if spec.width as usize >= src_width {
-            (src_width, src_height)
-        } else {
+        // No-upscale: `magick -resize <N>x<N>>` leaves smaller images untouched.
+        if spec.size as usize >= src_width && spec.size as usize >= src_height {
+            return finish_write(wand, spec);
+        }
+
+        let (new_width, new_height) = if src_width >= src_height {
             let ratio = src_height as f64 / src_width as f64;
             (
-                spec.width as usize,
-                (spec.width as f64 * ratio).round() as usize,
+                spec.size as usize,
+                (spec.size as f64 * ratio).round() as usize,
+            )
+        } else {
+            let ratio = src_width as f64 / src_height as f64;
+            (
+                (spec.size as f64 * ratio).round() as usize,
+                spec.size as usize,
             )
         };
 
@@ -131,11 +141,18 @@ unsafe fn run_resize(
             == MagickBooleanType_MagickFalse
         {
             return Err(ImagingError::Resize {
-                width: spec.width,
+                size: spec.size,
                 message: take_exception(wand),
             });
         }
 
+        finish_write(wand, spec)
+    }
+}
+
+/// Apply format/quality overrides and write the resized wand to `spec.path`.
+unsafe fn finish_write(wand: *mut MagickWand, spec: &OutputSpec) -> Result<(), ImagingError> {
+    unsafe {
         if let Some(format) = &spec.format {
             let fmt = CString::new(format.as_str()).expect("format contained NUL");
             if MagickSetImageFormat(wand, fmt.as_ptr()) == MagickBooleanType_MagickFalse {
