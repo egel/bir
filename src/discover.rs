@@ -28,7 +28,11 @@ pub enum DiscoverError {
 /// configured `widths` — those are outputs of previous runs, regardless of
 /// their extension (so e.g. `photo_w200.webp` is skipped even when the source
 /// extension filter is jpg/png only).
-pub fn find_images(dir: &Path, widths: &[u32], recursive: bool) -> Result<Vec<PathBuf>, DiscoverError> {
+pub fn find_images(
+    dir: &Path,
+    widths: &[u32],
+    recursive: bool,
+) -> Result<Vec<PathBuf>, DiscoverError> {
     if !dir.is_dir() {
         return Err(DiscoverError::NotADirectory {
             path: dir.to_path_buf(),
@@ -104,7 +108,10 @@ mod tests {
             .iter()
             .map(|p| p.file_name().unwrap().to_string_lossy().into_owned())
             .collect();
-        assert_eq!(names, vec!["a.JPG", "b.jpeg", "c.PNG", "d.bmp", "e.tif", "f.TIFF"]);
+        assert_eq!(
+            names,
+            vec!["a.JPG", "b.jpeg", "c.PNG", "d.bmp", "e.tif", "f.TIFF"]
+        );
     }
 
     #[test]
