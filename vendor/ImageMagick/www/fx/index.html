@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/fx/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:41 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | The FX Special Effects Image Operator</title>
+  <meta name="description" content="Explore ImageMagick’s FX special effects operator, a powerful pixel-level expression language for image manipulation. Learn how to apply mathematical formulas to transform, distort, composite, and analyze images with flexible scripting examples and advanced functions.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | The FX Special Effects Image Operator">
+  <meta property="og:description" content="Explore ImageMagick’s FX special effects operator, a powerful pixel-level expression language for image manipulation. Learn how to apply mathematical formulas to transform, distort, composite, and analyze images with flexible scripting examples and advanced functions.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/fx/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Explore ImageMagick’s FX special effects operator, a powerful pixel-level expression language for image manipulation. Learn how to apply mathematical formulas to transform, distort, composite, and analyze images with flexible scripting examples and advanced functions.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-processing/index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/fx/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">The FX Special Effects Image Operator</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Explore ImageMagick’s FX special effects operator, a powerful pixel-level expression language for image manipulation. Learn how to apply mathematical formulas to transform, distort, composite, and analyze images with flexible scripting examples and advanced functions.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="../command-line-processing/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <div class="container-fluid px-0">
+  <!-- Page Quick Navigation / ToC Header -->
+  <div class="card im-card bg-body-tertiary border-0 mb-4">
+    <div class="card-body p-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-2 text-body-secondary small">
+        <i class="bi bi-compass"></i>
+        <span>Jump to section:</span>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="#fx-overview" class="btn btn-sm btn-outline-secondary rounded-pill">Overview</a>
+        <a href="#fx-examples" class="btn btn-sm btn-outline-secondary rounded-pill">Examples & Scripts</a>
+        <a href="#anatomy" class="btn btn-sm btn-outline-secondary rounded-pill">Language Specification</a>
+        <a href="#source-images" class="btn btn-sm btn-outline-secondary rounded-pill">Source Images & Pixels</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: Overview -->
+  <section id="fx-overview" class="mb-5">
+    <div class="mb-4">
+      <p class="lead text-body">
+        The <a href="http://im.snibgo.com/fxnew.htm" rel="noopener noreferrer" target="_blank" class="fw-medium text-decoration-none">FX special effects image operator</a> applies mathematical expressions to each pixel channel of an image. The FX expression language provides a flexible mechanism for fine-grained pixel-level transformations, analysis, and custom procedural generation.
+      </p>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="p-3 border rounded-3 bg-body h-100 shadow-sm">
+          <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-semibold">
+            <i class="bi bi-palette fs-5"></i> Procedural Generation
+          </div>
+          <p class="small text-body-secondary mb-0">Create procedural canvases, mathematical gradients, colormaps, and fractal sets from equations.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="p-3 border rounded-3 bg-body h-100 shadow-sm">
+          <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-semibold">
+            <i class="bi bi-arrows-move fs-5"></i> Geometric Distortion
+          </div>
+          <p class="small text-body-secondary mb-0">Translate, flip, mirror, rotate, scale, shear, and warp images using custom coordinate functions.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="p-3 border rounded-3 bg-body h-100 shadow-sm">
+          <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-semibold">
+            <i class="bi bi-layers fs-5"></i> Compositing & Channel Routing
+          </div>
+          <p class="small text-body-secondary mb-0">Move color channels between images, convolve pixel neighborhoods, and merge multiple inputs seamlessly.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info d-flex align-items-start gap-3 border-0 shadow-sm" role="alert">
+      <i class="bi bi-info-circle-fill fs-5 mt-1 flex-shrink-0"></i>
+      <div>
+        <strong>Sequence Processing Note:</strong>
+        The operator loops through all pixels and channels, returning a modified copy of the first image in the sequence (<code class="font-mono">u</code>). Other images in the sequence serve as reference data unless <code class="font-mono">+fx</code> is used to process every image individually.
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Examples & Demonstration -->
+  <section id="fx-examples" class="mb-5">
+    <h3 class="fw-bold pb-2 border-bottom mb-4">Examples & Scripting Workflows</h3>
+
+    <!-- Example 1 -->
+    <div class="card im-card mb-4 overflow-hidden">
+      <div class="card-header bg-body-tertiary fw-semibold">
+        1. Simple Channel Modification (Canvas Color Swap)
+      </div>
+      <div class="card-body">
+        <p class="small text-body-secondary">Convert a black canvas to navy blue by assigning a fixed fractional value to the blue channel:</p>
+        <div class="bg-dark text-light rounded p-3 mb-3 font-mono border border-secondary border-opacity-25">
+          <span class="text-secondary">$</span> magick -size 64x64 canvas:black -channel blue -fx "1/2" fx_navy.png
+        </div>
+        <div class="d-flex align-items-center justify-content-center gap-4 p-3 bg-body-tertiary rounded">
+          <div class="text-center">
+            <img src="https://imagemagick.org/image/black.png" class="img-thumbnail mb-1" width="64" height="64" alt="Black canvas input" />
+            <div class="badge bg-secondary d-block">Input</div>
+          </div>
+          <i class="bi bi-arrow-right fs-4 text-secondary"></i>
+          <div class="text-center">
+            <img src="https://imagemagick.org/image/navy.png" class="img-thumbnail mb-1" width="64" height="64" alt="Navy canvas output" />
+            <div class="badge bg-primary d-block">Output</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="card im-card mb-4 overflow-hidden">
+      <div class="card-header bg-body-tertiary fw-semibold">
+        2. Non-linear Sigmoidal Contrast Transfer Function
+      </div>
+      <div class="card-body">
+        <p class="small text-body-secondary">Apply an exponential contrast curve formula to adjust image luminance response:</p>
+        <div class="bg-dark text-light rounded p-3 mb-3 font-mono border border-secondary border-opacity-25">
+          <span class="text-secondary">$</span> magick rose: -fx "(1.0/(1.0+exp(10.0*(0.5-u)))-0.006693)*1.0092503" rose-sigmoidal.png
+        </div>
+        <div class="d-flex align-items-center justify-content-center gap-4 p-3 bg-body-tertiary rounded">
+          <div class="text-center">
+            <img src="https://imagemagick.org/image/rose.jpg" class="img-thumbnail mb-1" width="70" height="46" alt="Rose original" />
+            <div class="badge bg-secondary d-block">Original</div>
+          </div>
+          <i class="bi bi-arrow-right fs-4 text-secondary"></i>
+          <div class="text-center">
+            <img src="https://imagemagick.org/image/rose-sigmoidal.png" class="img-thumbnail mb-1" width="70" height="46" alt="Rose high contrast" />
+            <div class="badge bg-primary d-block">High Contrast</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 3 -->
+    <div class="card im-card mb-4 overflow-hidden">
+      <div class="card-header bg-body-tertiary fw-semibold">
+        3. Custom Variables & Radial Gradients
+      </div>
+      <div class="card-body">
+        <p class="small text-body-secondary">Assign intermediate variable calculations (<code class="font-mono">Xi</code>, <code class="font-mono">Yj</code>) to construct mathematical gradients:</p>
+        <div class="bg-dark text-light rounded p-3 mb-3 font-mono border border-secondary border-opacity-25">
+          <span class="text-secondary">$</span> magick -size 70x70 canvas: -fx "Xi=i-w/2; Yj=j-h/2; 1.2*(0.5-hypot(Xi,Yj)/70.0)+0.5" radial-gradient.png
+        </div>
+        <div class="d-flex align-items-center justify-content-center p-3 bg-body-tertiary rounded">
+          <div class="text-center">
+            <img src="https://imagemagick.org/image/radial-gradient.png" class="img-thumbnail mb-1" width="70" height="70" alt="Radial gradient" />
+            <div class="badge bg-success d-block">Generated Pattern</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Scripts Accordion -->
+    <div class="accordion mb-4" id="advancedScripts">
+      <div class="accordion-item border rounded-3 overflow-hidden">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNoise">
+            Advanced: Gaussian Noise Generation
+          </button>
+        </h2>
+        <div id="collapseNoise" class="accordion-collapse collapse" data-bs-parent="#advancedScripts">
+          <div class="accordion-body bg-body-tertiary">
+            <p class="small text-body-secondary">Inject custom statistical Gaussian noise into an image pipeline:</p>
+            <div class="bg-dark text-light rounded p-3 font-mono border border-secondary border-opacity-25">
+              <span class="text-secondary">$</span> magick photo.jpg -fx 'iso=32; rone=rand(); rtwo=rand(); \<br>
+              &nbsp;&nbsp;myn=sqrt(-2*ln(rone))*cos(2*Pi*rtwo); myntwo=sqrt(-2*ln(rtwo))* \<br>
+              &nbsp;&nbsp;cos(2*Pi*rone); pnoise=sqrt(p)*myn*sqrt(iso)* \<br>
+              &nbsp;&nbsp;channel(4.28,3.86,6.68)/255; max(0,p+pnoise)' noisy.png
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item border rounded-3 overflow-hidden mt-2">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJulia">
+            Advanced: Julia Set Fractal Rendering
+          </button>
+        </h2>
+        <div id="collapseJulia" class="accordion-collapse collapse" data-bs-parent="#advancedScripts">
+          <div class="accordion-body bg-body-tertiary">
+            <p class="small text-body-secondary">Leverage iterative <code class="font-mono">for()</code> loops to map complex polynomial fractal calculations into color lookup tables (CLUT):</p>
+            <div class="bg-dark text-light rounded p-3 mb-3 font-mono border border-secondary border-opacity-25">
+              <span class="text-secondary">$</span> magick -size 400x400 xc:gray -fx " \<br>
+              &nbsp;&nbsp;Xi=2.4*i/w-1.2; \<br>
+              &nbsp;&nbsp;Yj=2.4*j/h-1.2; \<br>
+              &nbsp;&nbsp;for (pixel=0.0, (hypot(Xi,Yj) &lt; 2.0) &amp;&amp; (pixel &lt; 1.0), \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;delta=Xi^2-Yj^2; \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;Yj=2.0*Xi*Yj+0.2; \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;Xi=delta+0.4; \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;pixel+=0.00390625 \<br>
+              &nbsp;&nbsp;); \<br>
+              &nbsp;&nbsp;pixel == 1.0 ? 0.0 : pixel" \<br>
+              &nbsp;&nbsp;\( -size 1x1 xc:white xc:red xc:orange xc:yellow xc:green1 xc:cyan xc:blue \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xc:blueviolet xc:white -reverse +append -filter Cubic -resize 1024x1! \) \<br>
+              &nbsp;&nbsp;-clut -rotate -90 julia-set.png
+            </div>
+            <div class="text-center">
+              <img src="https://imagemagick.org/image/julia-set.png" class="img-thumbnail" width="160" height="160" alt="Julia Fractals" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item border rounded-3 overflow-hidden mt-2">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrimes">
+            Advanced: Prime Number Generator &amp; Console Debugging
+          </button>
+        </h2>
+        <div id="collapsePrimes" class="accordion-collapse collapse" data-bs-parent="#advancedScripts">
+          <div class="accordion-body bg-body-tertiary">
+            <p class="small text-body-secondary">Use the <code class="font-mono">debug()</code> statement inside FX loops to calculate math output directly to standard output:</p>
+            <div class="bg-dark text-light rounded p-3 font-mono border border-secondary border-opacity-25">
+              <span class="text-secondary">$</span> magick xc:gray -fx " \<br>
+              &nbsp;&nbsp;for (prime=2, prime &lt; 30, composite=0; \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;for (nn=2, nn &lt; (prime/2+1), if ((prime % nn) == 0, composite++, ); nn++); \<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (composite &lt;= 0, debug(prime), ); prime++)" null:
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="small text-body-secondary text-end">
+      For more script examples, visit the official <a href="https://usage.imagemagick.org/transform/index.html#fx" target="_blank" rel="noopener">ImageMagick Usage Guide</a>.
+    </p>
+  </section>
+
+  <!-- Section 3: Expression Anatomy & Reference -->
+  <section id="anatomy" class="mb-5">
+    <h3 class="fw-bold pb-2 border-bottom mb-4">The Anatomy of an FX Expression</h3>
+
+    <div class="card im-card mb-4">
+      <div class="card-header bg-body-tertiary">
+        <ul class="nav nav-tabs card-header-tabs" id="fxRefTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-semibold" id="symbols-tab" data-bs-toggle="tab" data-bs-target="#symbols" type="button" role="tab">Symbols &amp; Variables</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="math-tab" data-bs-toggle="tab" data-bs-target="#math" type="button" role="tab">Functions &amp; Math</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-semibold" id="operators-tab" data-bs-toggle="tab" data-bs-target="#operators" type="button" role="tab">Operators &amp; Types</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card-body tab-content" id="fxRefTabsContent">
+        <!-- Symbols Tab -->
+        <div class="tab-pane fade show active" id="symbols" role="tabpanel">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 20%;">Symbol</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody class="font-mono small">
+                <tr><td>u, v</td><td>First (<code class="text-primary">u</code>) and second (<code class="text-primary">v</code>) images in the active sequence list.</td></tr>
+                <tr><td>s, t, n</td><td>Current image reference (<code class="text-primary">s</code>), image sequence index (<code class="text-primary">t</code>), total image count (<code class="text-primary">n</code>).</td></tr>
+                <tr><td>i, j, p</td><td>Current column offset (<code class="text-primary">i</code>), row offset (<code class="text-primary">j</code>), target pixel channel accessor (<code class="text-primary">p</code>).</td></tr>
+                <tr><td>w, h, z</td><td>Current image width (<code class="text-primary">w</code>), height (<code class="text-primary">h</code>), channel depth (<code class="text-primary">z</code>).</td></tr>
+                <tr><td>r, g, b, a, o</td><td>Red, green, blue, alpha, and opacity values of the target pixel.</td></tr>
+                <tr><td>c, m, y, k</td><td>Cyan, magenta, yellow, and black values for CMYK target pixels.</td></tr>
+                <tr><td>intensity, luma</td><td>Calculated pixel color intensity or luma weighted scalar.</td></tr>
+                <tr><td>hue, saturation, lightness</td><td>Pixel color channels extracted from HSL space representation.</td></tr>
+                <tr><td>page.x, page.y, page.width</td><td>Canvas page offsets and dimensions.</td></tr>
+                <tr><td>mean, standard_deviation, kurtosis</td><td>Image or individual channel statistics (e.g. <code class="text-primary">mean.r</code>, <code class="text-primary">s.kurtosis</code>).</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Math Functions Tab -->
+        <div class="tab-pane fade" id="math" role="tabpanel">
+          <p class="small text-body-secondary mb-3">Supported native built-in mathematical functions:</p>
+          <div class="d-flex flex-wrap gap-1 font-mono small mb-3">
+            <span class="badge text-bg-light border">abs()</span>
+            <span class="badge text-bg-light border">acos()</span>
+            <span class="badge text-bg-light border">acosh()</span>
+            <span class="badge text-bg-light border">airy()</span>
+            <span class="badge text-bg-light border">alt()</span>
+            <span class="badge text-bg-light border">asin()</span>
+            <span class="badge text-bg-light border">asinh()</span>
+            <span class="badge text-bg-light border">atan()</span>
+            <span class="badge text-bg-light border">atan2()</span>
+            <span class="badge text-bg-light border">ceil()</span>
+            <span class="badge text-bg-light border">clamp()</span>
+            <span class="badge text-bg-light border">cos()</span>
+            <span class="badge text-bg-light border">cosh()</span>
+            <span class="badge text-bg-light border">debug()</span>
+            <span class="badge text-bg-light border">drc()</span>
+            <span class="badge text-bg-light border">epoch()</span>
+            <span class="badge text-bg-light border">erf()</span>
+            <span class="badge text-bg-light border">exp()</span>
+            <span class="badge text-bg-light border">floor()</span>
+            <span class="badge text-bg-light border">gauss()</span>
+            <span class="badge text-bg-light border">gcd()</span>
+            <span class="badge text-bg-light border">hypot()</span>
+            <span class="badge text-bg-light border">int()</span>
+            <span class="badge text-bg-light border">isnan()</span>
+            <span class="badge text-bg-light border">j0()</span>
+            <span class="badge text-bg-light border">j1()</span>
+            <span class="badge text-bg-light border">jinc()</span>
+            <span class="badge text-bg-light border">ln()</span>
+            <span class="badge text-bg-light border">log()</span>
+            <span class="badge text-bg-light border">logtwo()</span>
+            <span class="badge text-bg-light border">magicktime()</span>
+            <span class="badge text-bg-light border">max()</span>
+            <span class="badge text-bg-light border">min()</span>
+            <span class="badge text-bg-light border">mod()</span>
+            <span class="badge text-bg-light border">not()</span>
+            <span class="badge text-bg-light border">pow()</span>
+            <span class="badge text-bg-light border">rand()</span>
+            <span class="badge text-bg-light border">round()</span>
+            <span class="badge text-bg-light border">sign()</span>
+            <span class="badge text-bg-light border">sin()</span>
+            <span class="badge text-bg-light border">sinc()</span>
+            <span class="badge text-bg-light border">sinh()</span>
+            <span class="badge text-bg-light border">sqrt()</span>
+            <span class="badge text-bg-light border">squish()</span>
+            <span class="badge text-bg-light border">tan()</span>
+            <span class="badge text-bg-light border">tanh()</span>
+            <span class="badge text-bg-light border">trunc()</span>
+          </div>
+          <div class="row g-3 small">
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-body-tertiary">
+                <strong>Color Constructors:</strong> <code class="font-mono">rgb()</code>, <code class="font-mono">rgba()</code>, <code class="font-mono">hsl()</code>, <code class="font-mono">hsla()</code>, <code class="font-mono">cmyk()</code>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-body-tertiary">
+                <strong>Iterators:</strong> <code class="font-mono">for(init, condition, step)</code>, <code class="font-mono">while(cond, stmt)</code>, <code class="font-mono">do(cond, stmt)</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operators Tab -->
+        <div class="tab-pane fade" id="operators" role="tabpanel">
+          <ul class="list-group list-group-flush small font-mono">
+            <li class="list-group-item"><strong>Precedence 1 (Power):</strong> ^</li>
+            <li class="list-group-item"><strong>Precedence 2 (Unary/Multiplicative):</strong> -, *, /, %</li>
+            <li class="list-group-item"><strong>Precedence 3 (Additive/Shift):</strong> +, -, &lt;&lt;, &gt;&gt;</li>
+            <li class="list-group-item"><strong>Precedence 4 (Relational):</strong> &lt;, &lt;=, &gt;, &gt;=, ==, !=</li>
+            <li class="list-group-item"><strong>Precedence 5 (Bitwise/Logical):</strong> &amp;, |, ~, &amp;&amp;, ||, !</li>
+            <li class="list-group-item"><strong>Precedence 6 (Conditional):</strong> ?: (Ternary operator)</li>
+            <li class="list-group-item"><strong>Precedence 7 (Assignment):</strong> =, +=, -=, *=, /=, %=</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Syntax & Execution Rules -->
+    <div class="card im-card p-4">
+      <h5 class="fw-bold mb-3"><i class="bi bi-shield-exclamation text-warning me-2"></i>Syntax &amp; Semantics Rules</h5>
+      <ul class="small text-body-secondary mb-0 d-flex flex-column gap-2">
+        <li>Symbols and built-in identifiers are <strong>case insensitive</strong>.</li>
+        <li>Only <strong>one ternary conditional</strong> (<code class="font-mono">x ? y : z</code>) is permitted per individual expression statement.</li>
+        <li>Single-character variable names are strictly reserved for built-ins. Use multi-character names for custom variables (e.g. <code class="font-mono">Xi</code>, <code class="font-mono">iso</code>).</li>
+        <li>Unary operators take a lower priority than binary operators. For instance, <code class="font-mono">-3^2</code> evaluates as <code class="font-mono">-(3^2) = -9</code>. Always use parentheses (<code class="font-mono">(-3)^2 = 9</code>) to explicitly indicate order.</li>
+        <li>Implicit multiplication is not performed over fractions; <code class="font-mono">1/2x</code> is interpreted as <code class="font-mono">(1/2)x</code>. Write <code class="font-mono">1/(2x)</code> explicitly when required.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Section 4: Source Image Access & Relative Addressing -->
+  <section id="source-images" class="mb-5">
+    <h3 class="fw-bold pb-2 border-bottom mb-4">Source Images &amp; Pixel Addressing</h3>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card im-card h-100 p-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-images text-primary me-2"></i>Image Sequence Indexes</h5>
+          <p class="small text-body-secondary">
+            Use index qualifiers on image references to query other images in the current sequence stack. Zero is the first image; negative indexes count backward from the end.
+          </p>
+          <ul class="list-group list-group-flush font-mono small mb-3">
+            <li class="list-group-item bg-transparent">u[0] <span class="text-body-secondary float-end">First image</span></li>
+            <li class="list-group-item bg-transparent">u[2] <span class="text-body-secondary float-end">Third image</span></li>
+            <li class="list-group-item bg-transparent">u[-1] <span class="text-body-secondary float-end">Last image in list</span></li>
+            <li class="list-group-item bg-transparent">u[t] <span class="text-body-secondary float-end">Current image (s)</span></li>
+          </ul>
+          <div class="bg-dark text-light rounded p-2 font-mono extra-small">
+            $ magick img1.jpg img2.jpg img3.jpg -fx "(u+u[2])/2" out.jpg
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card im-card h-100 p-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-grid-3x3 text-primary me-2"></i>Pixel &amp; Neighborhood Access</h5>
+          <p class="small text-body-secondary">
+            All color values are normalized in the range <strong>0.0 to 1.0</strong>. Use relative indexing (brackets) or absolute coordinates (braces) with <code class="font-mono">p</code>:
+          </p>
+          <div class="bg-body-tertiary p-3 rounded font-mono small border mb-3">
+            <div class="mb-2"><strong>Relative Offset:</strong></div>
+            <div class="text-primary">p[-1,-1].r</div>
+            <div class="text-body-secondary extra-small mb-2">Red channel of the pixel diagonally top-left from current location</div>
+
+            <div class="mb-2"><strong>Absolute Offset:</strong></div>
+            <div class="text-primary">p{12,34}.b</div>
+            <div class="text-body-secondary extra-small">Blue channel value at column 12, row 34</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escapes & Formats -->
+    <div class="card im-card p-4">
+      <h5 class="fw-bold mb-3"><i class="bi bi-terminal-split text-success me-2"></i>Format Escapes &amp; String Evaluations</h5>
+      <p class="small text-body-secondary">
+        Instead of modifying pixels directly on an image canvas, FX formulas can be embedded into string escapes for metadata queries or dynamic settings:
+      </p>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="p-3 border rounded bg-body-tertiary h-100">
+            <h6><code class="font-mono">%[fx:]</code> Value Escape</h6>
+            <p class="extra-small text-body-secondary">Evaluated once per image in sequence. Returns numerical computation result directly into format attributes.</p>
+            <div class="bg-dark text-light rounded p-2 font-mono extra-small">
+              $ magick rose: -format '%[fx:w*h]' info:
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-3 border rounded bg-body-tertiary h-100">
+            <h6><code class="font-mono">%[pixel:]</code> Color Escape</h6>
+            <p class="extra-small text-body-secondary">Evaluates formula across color channels and automatically outputs a standardized CSS color or hex string.</p>
+            <div class="bg-dark text-light rounded p-2 font-mono extra-small">
+              $ magick rose: -format '%[pixel:p{0,0}]' info:
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="../security-policy/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/fx/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:41 GMT -->
+</html>

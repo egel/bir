@@ -1,0 +1,1197 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/defines/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:43 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | Defines</title>
+  <meta name="description" content="Maximize image processing with the -define command-line option, tailor coders/decoders, and control operations with precision for optimal results.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | Defines">
+  <meta property="og:description" content="Maximize image processing with the -define command-line option, tailor coders/decoders, and control operations with precision for optimal results.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/defines/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Maximize image processing with the -define command-line option, tailor coders/decoders, and control operations with precision for optimal results.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-processing/index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/defines/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">Defines</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Maximize image processing with the -define command-line option, tailor coders/decoders, and control operations with precision for optimal results.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="../command-line-processing/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <div class="container py-4">
+  <!-- Lead Section -->
+  <div class="row mb-4">
+    <div class="col-lg-10 mx-auto text-center">
+      <p class="lead text-body-secondary fs-5">
+        The <a href="../command-line-options/index.html#define" class="text-decoration-none fw-semibold">-define</a> command-line option adds specific global settings generally used to control coders and image processing operations.
+      </p>
+    </div>
+  </div>
+
+  <!-- Overview Details Card -->
+  <div class="card im-card p-4 mb-4 bg-body-tertiary">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <h6 class="fw-bold mb-2"><i class="bi bi-info-circle text-primary me-2"></i>About Definitions</h6>
+        <p class="small text-body-secondary mb-2">
+          This option creates one or more definitions for coders and decoders while reading and writing image data. Definitions control file format coder modules and image processing operations beyond normal options.
+        </p>
+        <p class="small text-body-secondary mb-0">
+          Defined settings appear in <a href="../command-line-options/index.html#verbose"><code>-verbose</code></a> information ("<code>info:</code>" output format) as <strong>Artifacts</strong>.
+        </p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="fw-bold mb-2"><i class="bi bi-sliders text-primary me-2"></i>Usage & Management</h6>
+        <ul class="list-unstyled small text-body-secondary d-flex flex-column gap-2 mb-0">
+          <li><i class="bi bi-check2 text-success me-1"></i> Missing values create empty-valued flags (on/off control).</li>
+          <li><i class="bi bi-check2 text-success me-1"></i> Use <code>-define keys</code> to remove previous definitions.</li>
+          <li><i class="bi bi-check2 text-success me-1"></i> Use <code>+define "*"</code> to clear all existing definitions.</li>
+          <li><i class="bi bi-check2 text-success me-1"></i> Equivalent settings can use <a href="../command-line-options/index.html#set"><code>-set "option:key" "value"</code></a> with <a href="../escape/index.html">Format Properties</a>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code Snippets -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="terminal-card h-100">
+        <div class="terminal-header">
+          <div class="terminal-dot bg-danger"></div>
+          <div class="terminal-dot bg-warning"></div>
+          <div class="terminal-dot bg-success"></div>
+          <span class="small text-secondary font-mono ms-2">example-define.sh</span>
+        </div>
+        <div class="p-3 text-light font-mono small">
+          <span class="text-success">$</span> magick bilevel.tif -define ps:imagemask eps3:stencil.ps<br>
+          <span class="text-success">$</span> magick arrow.tga -set colorspace:auto-grayscale=off myArrow.tga
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="terminal-card h-100">
+        <div class="terminal-header">
+          <div class="terminal-dot bg-danger"></div>
+          <div class="terminal-dot bg-warning"></div>
+          <div class="terminal-dot bg-success"></div>
+          <span class="small text-secondary font-mono ms-2">registry-define.sh</span>
+        </div>
+        <div class="p-3 text-light font-mono small">
+          <span class="text-secondary"># Set temporary work path in registry</span><br>
+          <span class="text-success">$</span> magick -define registry:temporary-path=/data/tmp input.png output.png
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Defines Tables Section -->
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-table fs-4 text-primary"></i>
+      <h2 class="h3 fw-bold mb-0">Recognized Defines</h2>
+    </div>
+    <span class="badge bg-secondary font-mono">Reference</span>
+  </div>
+
+  <p class="text-body-secondary mb-4">
+    The options and keys are case-independent (converted to lowercase for decoders) while values are case-dependent. Here is the complete list of recognized defines:
+  </p>
+
+  <!-- Table Container -->
+  <div class="card im-card overflow-hidden">
+    <div class="table-responsive" style="max-height: 75svh;">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" style="width: 35%;">Define Key / Pattern</th>
+            <th scope="col" style="width: 65%;">Description</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono small">
+          <!-- SECTION: COMMAND-LINE DEFINES -->
+          <tr class="table-secondary">
+            <th colspan="2" class="text-dark fw-bold text-center">Command-line Defines</th>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ashlar:best-fit</td>
+            <td class="text-body">align tiles on both the left and right edges.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ashlar:tiles</td>
+            <td class="text-body">set the maximum number of image tiles to render per canvas.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">auto-threshold:verbose</td>
+            <td class="text-body">return derived threshold as the <code>auto-threshold:threshold</code> image property.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">color:illuminant</td>
+            <td class="text-body">reference illuminant, defaults to D65.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">colorspace:auto-grayscale=<var class="text-secondary">on|off</var></td>
+            <td class="text-body">Prevent automatic conversion to grayscale inside coders that support grayscale. Should be accompanied by -type truecolor.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:frequency-domain=<var class="text-secondary">boolean</var></td>
+            <td class="text-body">Certain similarity metrics operate in frequency domain when FFTW and HDRI are enabled. Use <code>-define compare:frequency-domain=false</code> for spatial equivalents.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:ssim-radius=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set the structural similarity index radius.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:ssim-sigma=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set the structural similarity index sigma.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:ssim-k1=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set the structural similarity index k1 argument.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:ssim-k2=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set the structural similarity index k2 argument.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compare:virtual-pixels=<var class="text-secondary">boolean</var></td>
+            <td class="text-body">Treat unmatched areas as virtual pixels or limit comparison to authentic pixels using <code>-define compare:virtual-pixels=false</code>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">complex:snr=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set the divide SNR constant <a href="../command-line-options/index.html#complex">-complex</a>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compose:args=<var class="text-secondary">arguments</var></td>
+            <td class="text-body">Set certain compose argument values. See <a href="../compose/index.html">Image Composition</a>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compose:clip-to-self=<var class="text-secondary">true|false</var></td>
+            <td class="text-body">Some <a href="../command-line-options/index.html#compose">-compose</a> methods can modify destination outside overlay area. Disabled by default.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compose:clamp=<var class="text-secondary">on|off</var></td>
+            <td class="text-body">Set each pixel below zero to zero and above quantum range to quantum range. Supported in ImageMagick 6.9.1-3+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compose:colorspace=<var class="text-secondary">colorspace</var></td>
+            <td class="text-body">Set the colorspace for colorize composite operator. Default is HCL.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">compose:compose=<var class="text-secondary">on|off</var></td>
+            <td class="text-body">Perform true mathematics of image channels without alpha composition effects.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:angle-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merges any region with equivalent ellipse angle smaller than value. Imagemagick 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:area-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merges any region with area smaller than value into surrounding region. Optional ranges e.g. 410-1600.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:background-id=<var class="text-secondary">object-id</var></td>
+            <td class="text-body">Identify background object. Imagemagick 7.0.9.21+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:circularity-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with circularity smaller than value. Computed as 4*pi*area/perimeter^2. IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:diameter-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with diameter smaller than value. Computed as sqrt(4*area/pi). IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:eccentricity-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with equivalent ellipse eccentricity smaller than value. IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:exclude-header=<var class="text-secondary">true</var></td>
+            <td class="text-body">List objects without header. IM 7.0.9.21+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:keep=<var class="text-secondary">list-of-ids</var></td>
+            <td class="text-body">Comma and/or hyphenated list of id values to keep. IM 6.9.3-0+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:keep-colors=<var class="text-secondary">red;green;blue</var></td>
+            <td class="text-body">Keeps objects identified by color in semicolon separated list. IM 6.9.3-0+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:keep-top=<var class="text-secondary">number</var></td>
+            <td class="text-body">Keeps only top number of objects by area. IM 7.0.9.21+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:major-axis-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with major axis diameter smaller than value. IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:mean-color=<var class="text-secondary">true</var></td>
+            <td class="text-body">Change output image from id values to mean color values. IM 6.9.2-8+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:minor-axis-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with minor axis diameter smaller than value. IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:perimeter-threshold=<var class="text-secondary">value</var></td>
+            <td class="text-body">Merge region with perimeter smaller than value. IM 7.0.9.24+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:remove=<var class="text-secondary">list-of-ids</var></td>
+            <td class="text-body">Comma/hyphenated list of id values to remove. IM 6.9.2-9+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:remove-colors=<var class="text-secondary">red;green;blue</var></td>
+            <td class="text-body">Remove objects identified by color in semicolon list. IM 6.9.3-0+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">connected-components:verbose=<var class="text-secondary">true</var></td>
+            <td class="text-body">Lists id, bounding box, centroid, area, mean color for each region.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">convolve:scale=<var class="text-secondary">scale[!^] [,add] [%]</var></td>
+            <td class="text-body">Define kernel scaling. Flag ! auto scales to full range. Flag ^ assures zero-summing. Origin addition adds value to center pixel.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">deskew:auto-crop=<var class="text-secondary">true</var></td>
+            <td class="text-body">Auto crop image after deskewing.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">delegate:bimodal=<var class="text-secondary">true</var></td>
+            <td class="text-body">Specify direct conversion from Postscript to PDF.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">distort:scale=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set output scaling factor for <a href="../command-line-options/index.html#distort">-distort</a>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">distort:viewport=<var class="text-secondary">WxH+X+Y</var></td>
+            <td class="text-body">Set viewport for <a href="../command-line-options/index.html#distort">-distort</a>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dither:diffusion-amount=<var class="text-secondary">X%</var></td>
+            <td class="text-body">Set amount of diffusion for Floyd-Steinberg diffusion.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">exif:sync-image=false</td>
+            <td class="text-body">Ignore EXIF profile for image resolution syncing.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filename:literal=<var class="text-secondary">true</var></td>
+            <td class="text-body">Bypass interpreting embedded formatting characters and use filename literally.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:option=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set filter option for <a href="../command-line-options/index.html#resize">-resize</a>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:b=<var class="text-secondary">value</var></td>
+            <td class="text-body">Redefine spline factor for cubic filters (Mitchell-Netravali definition).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:blur=<var class="text-secondary">factor</var></td>
+            <td class="text-body">Scale X axis of filter (&gt; 1.0 blurry, &lt; 1.0 sharp). Use with Gaussian-like filters.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:c=<var class="text-secondary">value</var></td>
+            <td class="text-body">Redefine Keys alpha factor for cubic filters.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:kaiser-alpha=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set Kaiser window alpha value (equivalent to kaiser-beta when multiplied by PI).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:kaiser-beta=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set Kaiser window beta value. Default is 6.5.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:lobes=<var class="text-secondary">count</var></td>
+            <td class="text-body">Set number of lobes for Sinc/Bessel filter (support range).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:sigma=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set sigma value for Gaussian filter. Default is 0.5.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:support=<var class="text-secondary">radius</var></td>
+            <td class="text-body">Set filter support radius.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:verbose=<var class="text-secondary">true</var></td>
+            <td class="text-body">Enable printing internal filter selection info to standard output.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:window=<var class="text-secondary">filter_function</var></td>
+            <td class="text-body">Specify filter function for windowing IIR filters Sinc and Jinc.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">filter:window-support=<var class="text-secondary">radius</var></td>
+            <td class="text-body">Scale windowing function to this size.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">h:format=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set image encoding format for C-style header. Defaults to GIF (PseudoClass) and PNM (DirectClass).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">fourier:normalize=<var class="text-secondary">inverse</var></td>
+            <td class="text-body">Set FFT/IFT normalization location for <a href="../command-line-options/index.html#fft">+-fft</a> / <a href="../command-line-options/index.html#ift">+-ift</a>. Default is forward.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">frames:step</td>
+            <td class="text-body">Step interval when selecting image frames (e.g., step 2 skips alternating frames).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">fx:debug=true</td>
+            <td class="text-body">Debug <code>-fx</code> expression.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">hough-lines:accumulator=true</td>
+            <td class="text-body">Return accumulator image alongside lines image.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">identify:convex-hull=<var class="text-secondary">true</var></td>
+            <td class="text-body">Display convex hull & minimum bounding box.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">identify:locate=<var class="text-secondary">value</var></td>
+            <td class="text-body">Display minimum or maximum pixel locations (default: maximum).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">identify:limit=<var class="text-secondary">value</var></td>
+            <td class="text-body">Maximum pixel locations to display with <code>identify:locate</code>.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">image:frames</td>
+            <td class="text-body">Select specific frames from multi-image formats (e.g., <code>0-3</code>).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">json:features</td>
+            <td class="text-body">Include features in verbose JSON information.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">kmeans:seed-colors=<var class="text-secondary">color-list</var></td>
+            <td class="text-body">Initialize colors with semicolon-delimited list of seed colors.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">magick:format=<var class="text-secondary">value</var></td>
+            <td class="text-body">Equivalent to <code>h:format=format</code> for C-style headers.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">magnify:method=<var class="text-secondary">value</var></td>
+            <td class="text-body">Choose pixel art magnification method (eagle2X, scale2X default, xbr2X, etc.).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">modulate:colorspace=<var class="text-secondary">colorspace</var></td>
+            <td class="text-body">Define colorspace for <a href="../command-line-options/index.html#modulate">-modulate</a> (default HSL).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">morphology:compose=<var class="text-secondary">method</var></td>
+            <td class="text-body">Specify how to merge multiple <a href="#morphology">-morphology</a> kernels.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">morphology:showKernel=<var class="text-secondary">1</var></td>
+            <td class="text-body">Output kernel information to standard error.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">phash:colorspaces=<var class="text-secondary">list</var></td>
+            <td class="text-body">Specify up to six alternative colorspaces for perceptual hash (IM 7.0.3-8+).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">phash:normalize=<var class="text-secondary">true</var></td>
+            <td class="text-body">Normalize phash metric.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">pixel:compliance=<var class="text-secondary">standard</var></td>
+            <td class="text-body">Format color values based on standard compliance (svg, mvg, x11, etc.).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:bit-depth=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set PNG bit depth.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:chunk-malloc-max=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set maximum chunk size.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">profile:skip=<var class="text-secondary">names</var></td>
+            <td class="text-body">Skip named profiles (ICC, EXIF, XMP, etc.) when reading image. Use <code>skip="*"</code> for all.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">precision:highres-transform=<var class="text-secondary">true</var></td>
+            <td class="text-body">Increase profile transform precision using floating point.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">preserve-timestamp=<var class="text-secondary">true|false</var></td>
+            <td class="text-body">Preserve file timestamp (<code>mogrify</code> only).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">q-table=<var class="text-secondary">file.xml</var></td>
+            <td class="text-body">Custom JPEG quantization tables.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">quantum:format=<var class="text-secondary">type</var></td>
+            <td class="text-body">Specify <code>floating-point</code> or <code>signed</code> format for raw files or HDRI preservation.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">quantum:maximum=<var class="text-secondary">value</var></td>
+            <td class="text-body">Maximum value for formats like DCM (defaults to QuantumRange).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">quantum:minimum=<var class="text-secondary">value</var></td>
+            <td class="text-body">Minimum value for formats like DCM (defaults to zero).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">quantum:polarity=<var class="text-secondary">interpretation</var></td>
+            <td class="text-body">Set TIFF photometric-interpretation (min-is-black or min-is-white).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">registry:<var class="text-secondary">attr</var>=<var class="text-secondary">val</var></td>
+            <td class="text-body">Set image registry attributes.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">registry:date:precision=<var class="text-secondary">len</var></td>
+            <td class="text-body">Set max characters printed for timestamps.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">registry:option:pedantic=<var class="text-secondary">bool</var></td>
+            <td class="text-body">Interpret ambiguous command-line options as options instead of filenames when true.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">registry:precision=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set max significant digits printed.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">resample:verbose=<var class="text-secondary">true</var></td>
+            <td class="text-body">Output EWA cylindrical filter lookup table for debugging.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">sample:offset=<var class="text-secondary">geometry</var></td>
+            <td class="text-body">Sampling point location expressed as percentages.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">shepards:power=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set exponent in Shepard's distortion (default: 2).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">stream:buffer-size=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set stream buffer size (0 for unbuffered I/O).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">trim:percent-background=<var class="text-secondary">X%</var></td>
+            <td class="text-body">Tolerance amount of background tolerated in an edge.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">trim:edges=<var class="text-secondary">edges</var></td>
+            <td class="text-body">Only trim specified edges (north,east,south,west).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">trim:minSize=<var class="text-secondary">geometry</var></td>
+            <td class="text-body">Limit trim to specified size.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">type:features=<var class="text-secondary">string</var></td>
+            <td class="text-body">Add font feature for RAQM delegate during complex text layout.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">type:hinting=<var class="text-secondary">false</var></td>
+            <td class="text-body">Disable font hinting.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">white-balance:vibrance=<var class="text-secondary">value</var></td>
+            <td class="text-body">Change color vibrance of a &amp; b channels.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">x:screen=<var class="text-secondary">true</var></td>
+            <td class="text-body">Obtain image from root window.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">x:silent=<var class="text-secondary">true</var></td>
+            <td class="text-body">Turn off beep when importing image.</td>
+          </tr>
+
+          <!-- SECTION: IMAGE FORMATS -->
+          <tr class="table-secondary">
+            <th colspan="2" class="text-dark fw-bold text-center">Image Formats</th>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">bmp3:alpha=<var class="text-secondary">true|false</var></td>
+            <td class="text-body">Include alpha channel when writing BMP.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">bmp:format=<var class="text-secondary">value</var></td>
+            <td class="text-body">Valid values: bmp2, bmp3, bmp4. Useful with mogrify.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">bmp:subtype=<var class="text-secondary">value</var></td>
+            <td class="text-body">BMP channel depth subtypes (RGB555, RGB565, ARGB4444, ARGB1555).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">{caption,label}:max-pointsize=<var class="text-secondary">val</var></td>
+            <td class="text-body">Set bounding pointsize for maximum fit.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dcm:display-range=<var class="text-secondary">reset</var></td>
+            <td class="text-body">Set display range to min/max pixel values for DCM.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dcm:fix-byte-order=<var class="text-secondary">true</var></td>
+            <td class="text-body">Fix incorrect byte order when reading DCM pixels.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dcm:rescale=<var class="text-secondary">true</var></td>
+            <td class="text-body">Enable interpretation of rescale slope and intercept.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dcm:window=<var class="text-secondary">CxW</var></td>
+            <td class="text-body">Specify DCM window center and width.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dds:cluster-fit=<var class="text-secondary">true|false</var></td>
+            <td class="text-body">Enable DDS cluster-fit.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dds:compression=<var class="text-secondary">dxt1|dxt5|none</var></td>
+            <td class="text-body">Set DDS compression.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dds:mipmaps=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set DDS number of mipmaps.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dds:weight-by-alpha=<var class="text-secondary">true|false</var></td>
+            <td class="text-body">Enable DDS alpha weighting.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:max-raw-memory=<var class="text-secondary">value</var></td>
+            <td class="text-body">Stop processing if raw buffer exceeds megabytes (default: 8192).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:no-auto-bright=<var class="text-secondary">true</var></td>
+            <td class="text-body">Disable histogram-based white level.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:output-color=<var class="text-secondary">value</var></td>
+            <td class="text-body">Select output colorspace (0-6).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:read-thumbnail=<var class="text-secondary">true</var></td>
+            <td class="text-body">Store embedded thumbnail as 'dng:thumbnail' profile.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:read-thumbnails=<var class="text-secondary">true</var></td>
+            <td class="text-body">Read embedded thumbnails as images instead of full raw image.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:use-auto-wb=<var class="text-secondary">true</var></td>
+            <td class="text-body">Compute white balance by averaging entire image.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dng:use-camera-wb=<var class="text-secondary">true</var></td>
+            <td class="text-body">Use camera-specified white balance (default: true).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">dot:layout-engine=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify layout engine for DOT format (e.g. <code>neato</code>).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">eps:use-cropbox=<var class="text-secondary">true</var></td>
+            <td class="text-body">Force ImageMagick to respect crop box.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">exr:color-type=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify color type for EXR format (RGB, RGBA, YC, Y, etc.).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">fpx:view=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify FlashPix viewing object and transform commands.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ftxt:chsep=<var class="text-secondary">value</var></td>
+            <td class="text-body">Character separating channel values (default: ",").</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ftxt:format=<var class="text-secondary">value</var></td>
+            <td class="text-body">Format string for reading/writing text.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">heic:chroma=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set HEIC chroma parameter ("420", "422", "444").</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">heic:cicp=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set HEIC color primaries, transfer characteristics, and matrix.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">heic:preserve-orientation=<var class="text-secondary">true</var></td>
+            <td class="text-body">Preserve original EXIF orientation during HEIC decoding.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">heic:primary-image=<var class="text-secondary">true</var></td>
+            <td class="text-body">Read only primary image of HEIC/AVIF container.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">heic:speed=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set HEIC speed parameter (0-9, default 5).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">icon:auto-resize</td>
+            <td class="text-body">Automatically store multiple sizes when writing ICO (requires 256x256 input).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">json:moments</td>
+            <td class="text-body">Include image moments in verbose JSON information.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jp2:layer-number=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set max quality layers to decode for JPEG-2000.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jp2:rate=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify compression factor (0.0 to 1.0, 1.0 = lossless), overriding -quality.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jpeg:arithmetic-coding=<var class="text-secondary">on|off</var></td>
+            <td class="text-body">Enable/disable Huffman optimization.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jpeg:dct-method=<var class="text-secondary">value</var></td>
+            <td class="text-body">Choose DCT method (default, fastest, float, ifast, islow).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jpeg:extent=<var class="text-secondary">value</var></td>
+            <td class="text-body">Restrict max JPEG file size (e.g., <code>400KB</code>).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jpeg:high-bit-depth=<var class="text-secondary">on|off</var></td>
+            <td class="text-body">Produce 12-bit or 16-bit JPEG images if source depth exceeds 8 bits.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jpeg:size=<var class="text-secondary">geometry</var></td>
+            <td class="text-body">Set size hint for downscaling large JPEGs efficiently.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jxl:decoding-speed=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set JPEG XL decoding speed (0 to 4).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">jxl:effort=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set JPEG XL encoding effort (3 to 9).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">minimum-bounding-box:orientation=<var class="text-secondary">val</var></td>
+            <td class="text-body">Find smallest perpendicular distance (horizontal or vertical).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">pdf:author=<var class="text-secondary">author</var></td>
+            <td class="text-body">Set PDF document author.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">pdf:fit-page=<var class="text-secondary">geometry</var></td>
+            <td class="text-body">Specify scaling dimensions when reading PDF.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">pdf:thumbnail=<var class="text-secondary">false</var></td>
+            <td class="text-body">Generate image thumbnails when saving PDF.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:color-type=<var class="text-secondary">value</var></td>
+            <td class="text-body">Force PNG bit-depth and color-type without quality loss.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:compression-level=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set zlib compression level (0 through 9).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:format=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify PNG format variant (png8, png24, png32, png48, png64, png00).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">png:include-chunk=<var class="text-secondary">value</var></td>
+            <td class="text-body">Ancillary chunks to be included/excluded from PNG output.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ps:imagemask</td>
+            <td class="text-body">Render bilevel images using PostScript <code>imagemask</code> operator.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">psd:additional-info=<var class="text-secondary">all|selective</var></td>
+            <td class="text-body">Preserve non-geometric additional PSD information between conversions. IM 6.9.5-8+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">ptif:pyramid=<var class="text-secondary">min-base</var>x<var class="text-secondary">levels</var></td>
+            <td class="text-body">Specify pyramid parameters for PTIF (e.g., 64x4).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">svg:parse-huge=<var class="text-secondary">true</var></td>
+            <td class="text-body">Enable rendering of very large trusted SVGs.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">tga:preserve-orientation=<var class="text-secondary">true</var></td>
+            <td class="text-body">Preserve TGA image orientation.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">tiff:alpha=<var class="text-secondary">mode</var></td>
+            <td class="text-body">Specify alpha extra samples (associated, unassociated, unspecified).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">tiff:predictor=<var class="text-secondary">value</var></td>
+            <td class="text-body">Apply mathematical predictor before compression (1=none, 2=horizontal, 3=floating-point).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">uhdr:gainmap-quality=<var class="text-secondary">value</var></td>
+            <td class="text-body">Set UltraHDR gainmap encoding quality (1 to 100).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">video:intermediate-format=<var class="text-secondary">format</var></td>
+            <td class="text-body">Set video intermediate format option for <code>ffmpeg</code> (pam, webp).</td>
+          </tr>
+
+          <!-- SECTION: PSEUDO-IMAGE FORMATS -->
+          <tr class="table-secondary">
+            <th colspan="2" class="text-dark fw-bold text-center">Pseudo-Image Formats</th>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">caption:max-pointsize=<var class="text-secondary">pointsize</var></td>
+            <td class="text-body">Limit maximum point size for caption layout.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">caption:split=<var class="text-secondary">boolean</var></td>
+            <td class="text-body">Split text if required to fit caption on canvas.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:angle=<var class="text-secondary">angle</var></td>
+            <td class="text-body">Specify direction of linear gradient or rotation of radial gradient. IM 6.9.2-5+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:bounding-box=<var class="text-secondary">WxH+X+Y</var></td>
+            <td class="text-body">Limit gradient region. IM 6.9.2-5+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:center=<var class="text-secondary">x,y</var></td>
+            <td class="text-body">Specify coordinates of center point for radial gradient. IM 6.9.2-5+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:direction=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify linear gradient direction (NorthWest, North, etc.). IM 6.9.2-5+.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:extent=<var class="text-secondary">value</var></td>
+            <td class="text-body">Specify shape of centered radial gradient (Circle, Diagonal, Ellipse, Maximum, Minimum).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:radii=<var class="text-secondary">x,y</var></td>
+            <td class="text-body">Specify X and Y radii of gradient.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">gradient:vector=<var class="text-secondary">x1,y1,x2,y2</var></td>
+            <td class="text-body">Specify direction vector from start to end color positions.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">histogram:unique-colors=<var class="text-secondary">false</var></td>
+            <td class="text-body">Suppress textual listing of image's unique colors.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">pango:<var class="text-secondary">tag</var>=<var class="text-secondary">value</var></td>
+            <td class="text-body">Configure Pango layout properties (align, ellipsize, justify, wrap, etc.).</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">webp:<var class="text-secondary">tag</var>=<var class="text-secondary">value</var></td>
+            <td class="text-body">WebP specific encoding options. See WebP documentation.</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold text-primary">xmp:validate=<var class="text-secondary">bool</var></td>
+            <td class="text-body">Validate embedded XMP profiles (enabled by default).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="../security-policy/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/defines/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:43 GMT -->
+</html>

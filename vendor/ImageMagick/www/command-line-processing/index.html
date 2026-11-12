@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/command-line-processing/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:17 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | Command-line Processing</title>
+  <meta name="description" content="Learn how ImageMagick interprets and executes command-line instructions for image manipulation. Master processing order, options, and input/output workflows.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | Command-line Processing">
+  <meta property="og:description" content="Learn how ImageMagick interprets and executes command-line instructions for image manipulation. Master processing order, options, and input/output workflows.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/command-line-processing/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Learn how ImageMagick interprets and executes command-line instructions for image manipulation. Master processing order, options, and input/output workflows.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/command-line-processing/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">Command-line Processing</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Learn how ImageMagick interprets and executes command-line instructions for image manipulation. Master processing order, options, and input/output workflows.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <!-- Page Jump Navigation -->
+<section class="mb-4">
+  <div class="p-3 rounded-3 bg-body-tertiary border text-center">
+    <div class="d-flex flex-wrap justify-content-center gap-2 small">
+      <a href="#anatomy" class="btn btn-sm btn-outline-secondary">Anatomy</a>
+      <a href="#input" class="btn btn-sm btn-outline-secondary">Input Filename</a>
+      <a href="#option" class="btn btn-sm btn-outline-secondary">Command Options</a>
+      <a href="#setting" class="btn btn-sm btn-outline-secondary">Settings</a>
+      <a href="#operator" class="btn btn-sm btn-outline-secondary">Operators</a>
+      <a href="#sequence" class="btn btn-sm btn-outline-secondary">Sequence</a>
+      <a href="#geometry" class="btn btn-sm btn-outline-secondary">Geometry</a>
+      <a href="#stack" class="btn btn-sm btn-outline-secondary">Stack</a>
+      <a href="#output" class="btn btn-sm btn-outline-secondary">Output Filename</a>
+    </div>
+  </div>
+</section>
+
+<!-- Introduction Section -->
+<section class="mb-5">
+  <div class="p-4 p-md-5 rounded-3 bg-body-tertiary border">
+    <p class="lead mb-4">
+      The ImageMagick command-line <a href="../command-line-tools/index.html" class="text-decoration-none fw-medium">tools</a> can range from simple single-file conversions:
+    </p>
+    
+    <div class="bg-dark text-light p-3 rounded font-mono small mb-3">
+      $ magick image.jpg image.png
+    </div>
+
+    <p class="text-body-secondary mb-3">Or scale into complex multi-step processing pipelines with a plethora of options:</p>
+    
+    <div class="bg-dark text-light p-3 rounded font-mono small mb-4 overflow-x-auto">
+      $ magick label.gif -alpha Set \<br>
+      &nbsp;&nbsp;\( +clone -shade 110x90 -normalize -negate +clone -compose Plus -composite \) \<br>
+      &nbsp;&nbsp;\( -clone 0 -shade 110x50 -normalize -channel BG -fx 0 +channel -alpha Off \) \<br>
+      &nbsp;&nbsp;-delete 0 +swap -compose Multiply -composite button.gif
+    </div>
+
+    <div class="alert alert-info mb-3 small">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <strong>Cross-Platform Note:</strong> Linux uses the backslash (<code>\</code>) for line continuation, whereas Windows uses a caret (<code>^</code>). Parentheses do not require escaping under Windows.
+    </div>
+  </div>
+</section>
+
+<!-- Visual Showcase Cards -->
+<div class="row g-4 mb-5">
+  <div class="col-md-6">
+    <div class="card im-card p-4 h-100">
+      <h6 class="fw-bold mb-3">2D Label to 3D Simulated Depth</h6>
+      <div class="d-flex align-items-center justify-content-center gap-3 bg-body-secondary p-3 rounded mb-3">
+        <a href="../image/label.gif" target="_blank"><img src="../image/label.gif" width="78" height="53" alt="label" class="border rounded"></a>
+        <i class="bi bi-arrow-right fs-4 text-primary"></i>
+        <a href="../image/button.gif" target="_blank"><img src="../image/button.gif" width="78" height="53" alt="button" class="border rounded"></a>
+      </div>
+      <p class="small text-body-secondary mb-0">Transform flat typography into rich, textured dimensional UI buttons using single-line execution.</p>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card im-card p-4 h-100">
+      <h6 class="fw-bold mb-3">Dynamic Shaded Progress Cylinder</h6>
+      <div class="text-center bg-body-secondary p-2 rounded mb-3">
+        <img src="../image/cylinder_shaded.png" alt="Shaded Cylinder" class="img-fluid rounded" style="max-height: 110px;">
+      </div>
+      <p class="small text-body-secondary mb-0">Generate complex vector-like primitives, gradients, shadows, and labels programmatically.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy Section -->
+<section id="anatomy" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-diagram-3-fill fs-3 text-primary"></i>
+    <h2 class="fw-bold mb-0">The Anatomy of the Command-line</h2>
+  </div>
+  <p class="text-body-secondary mb-3">An ImageMagick command string consists of the following modular building blocks:</p>
+  
+  <div class="card im-card p-4">
+    <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+      <li><i class="bi bi-check2-circle text-success me-2"></i> One or more required <strong>input filenames</strong>.</li>
+      <li><i class="bi bi-check2-circle text-success me-2"></i> Zero, one, or more persistent <strong>image settings</strong>.</li>
+      <li><i class="bi bi-check2-circle text-success me-2"></i> Zero, one, or more immediate <strong>image operators</strong>.</li>
+      <li><i class="bi bi-check2-circle text-success me-2"></i> Zero, one, or more <strong>image sequence operators</strong>.</li>
+      <li><i class="bi bi-check2-circle text-success me-2"></i> Zero, one, or more isolated <strong>image stacks</strong> (parentheses).</li>
+      <li><i class="bi bi-check2-circle text-success me-2"></i> Zero or one <strong>output image filename</strong>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Input Filename Section -->
+<section id="input" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-box-arrow-in-right fs-3 text-primary"></i>
+    <h2 class="fw-bold mb-0">Input Filename Extensions</h2>
+  </div>
+  <p class="text-body-secondary mb-4">ImageMagick extends input filenames far beyond simple file paths to support globbing, built-ins, and direct streams.</p>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card im-card p-3 h-100">
+        <h6 class="fw-bold text-primary">Filename Globbing</h6>
+        <p class="small text-body-secondary mb-2">Wildcards like asterisks automatically match sets of files across all platforms (e.g., Windows and Linux):</p>
+        <div class="bg-dark text-light p-2 rounded small font-mono">$ magick *.jpg images.gif</div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card im-card p-3 h-100">
+        <h6 class="fw-bold text-primary">Explicit Image Format</h6>
+        <p class="small text-body-secondary mb-2">Force signature-less raw data streams by prefixing formats explicitly:</p>
+        <div class="bg-dark text-light p-2 rounded small font-mono">$ magick -size 640x480 -depth 8 rgb:image image.png</div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card im-card p-3 h-100">
+        <h6 class="fw-bold text-primary">Built-in Images & Patterns</h6>
+        <p class="small text-body-secondary mb-2">Generate standard procedural patterns instantly:</p>
+        <div class="bg-dark text-light p-2 rounded small font-mono">$ magick -size 640x480 pattern:checkerboard checkerboard.png</div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card im-card p-3 h-100">
+        <h6 class="fw-bold text-primary">STDIN / STDOUT Pipes</h6>
+        <p class="small text-body-secondary mb-2">Stream image pipelines seamlessly between processes using <code>-</code>:</p>
+        <div class="bg-dark text-light p-2 rounded small font-mono">$ magick logo: gif:- | magick display gif:-</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Options & Settings Sections -->
+<section id="option" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-sliders fs-3 text-primary"></i>
+    <h2 class="fw-bold mb-0">Command-line Options & Settings</h2>
+  </div>
+  <p class="text-body-secondary mb-4">Options dictate execution behavior and are categorized into persistent settings, immediate operators, sequence operators, and geometry modifiers.</p>
+
+  <!-- Settings Grid -->
+  <div id="setting" class="card im-card p-4 mb-4">
+    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-gear me-2"></i> Image Settings (Persistent)</h5>
+    <p class="small text-body-secondary mb-3">Persist across the command line until execution terminates or settings are overridden:</p>
+    <ul class="list-unstyled d-flex flex-wrap gap-2 small font-mono">
+      <li><a href="../command-line-options/index.html#adjoin" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-adjoin</a></li>
+      <li><a href="../command-line-options/index.html#alpha" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-alpha</a></li>
+      <li><a href="../command-line-options/index.html#background" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-background</a></li>
+      <li><a href="../command-line-options/index.html#colorspace" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-colorspace</a></li>
+      <li><a href="../command-line-options/index.html#density" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-density</a></li>
+      <li><a href="../command-line-options/index.html#depth" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-depth</a></li>
+      <li><a href="../command-line-options/index.html#font" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-font</a></li>
+      <li><a href="../command-line-options/index.html#format" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-format</a></li>
+      <li><a href="../command-line-options/index.html#quality" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-quality</a></li>
+      <li><a href="../command-line-options/index.html#size" class="badge bg-secondary-subtle text-secondary-emphasis text-decoration-none p-2">-size</a></li>
+    </ul>
+  </div>
+
+  <!-- Operators Grid -->
+  <div id="operator" class="card im-card p-4 mb-4">
+    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-lightning-charge me-2"></i> Image Operators (Immediate)</h5>
+    <p class="small text-body-secondary mb-3">Execute immediately against the current active image set:</p>
+    <ul class="list-unstyled d-flex flex-wrap gap-2 small font-mono">
+      <li><a href="../command-line-options/index.html#blur" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-blur</a></li>
+      <li><a href="../command-line-options/index.html#charcoal" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-charcoal</a></li>
+      <li><a href="../command-line-options/index.html#crop" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-crop</a></li>
+      <li><a href="../command-line-options/index.html#despeckle" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-despeckle</a></li>
+      <li><a href="../command-line-options/index.html#flop" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-flop</a></li>
+      <li><a href="../command-line-options/index.html#negate" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-negate</a></li>
+      <li><a href="../command-line-options/index.html#resize" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-resize</a></li>
+      <li><a href="../command-line-options/index.html#rotate" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-rotate</a></li>
+      <li><a href="../command-line-options/index.html#sharpen" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-sharpen</a></li>
+      <li><a href="../command-line-options/index.html#trim" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none p-2">-trim</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Geometry Section -->
+<section id="geometry" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-aspect-ratio fs-3 text-primary"></i>
+    <h2 class="fw-bold mb-0">Image Geometry Reference</h2>
+  </div>
+  <p class="text-body-secondary mb-4">Geometry arguments control target widths, heights, percentages, and coordinate offsets without spaces.</p>
+
+  <div class="card im-card overflow-hidden mb-4">
+    <div class="table-responsive" style="max-height: 500px;">
+      <table class="table table-hover table-striped mb-0 align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th class="ps-3 font-mono">Size / Modifier</th>
+            <th class="pe-3">Description & Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ps-3 font-mono">scale%</td>
+            <td class="pe-3 small text-body-secondary">Height and width both scaled by specified percentage.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">widthxheight</td>
+            <td class="pe-3 small text-body-secondary">Maximum values of height and width given; aspect ratio preserved.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">widthxheight^</td>
+            <td class="pe-3 small text-body-secondary">Minimum values of width and height given; aspect ratio preserved.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">widthxheight!</td>
+            <td class="pe-3 small text-body-secondary">Width and height strictly forced; original aspect ratio ignored.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">widthxheight&gt;</td>
+            <td class="pe-3 small text-body-secondary">Shrink image only if dimensions are larger than specified bounds.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">widthxheight&lt;</td>
+            <td class="pe-3 small text-body-secondary">Enlarge image only if dimensions are smaller than specified bounds.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">area@</td>
+            <td class="pe-3 small text-body-secondary">Resize image to total pixel area limit while preserving aspect ratio.</td>
+          </tr>
+          <tr>
+            <td class="ps-3 font-mono">size+x+y</td>
+            <td class="pe-3 small text-body-secondary">Pixel offset coordinates adjusted by gravity rules.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Stack & Output Section -->
+<section id="stack" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-stack fs-3 text-primary"></i>
+    <h2 class="fw-bold mb-0">Image Stack & Output Management</h2>
+  </div>
+  <p class="text-body-secondary mb-4">Isolate operations using parenthesis blocks and export results using advanced formatting strings.</p>
+
+  <div class="card im-card p-4 mb-4">
+    <h5 class="fw-bold mb-2">Isolated Stack Processing Example</h5>
+    <p class="small text-body-secondary mb-3">Apply rotation strictly inside a parentheses stack without affecting preceding files:</p>
+    <div class="bg-dark text-light p-3 rounded font-mono small">
+      $ magick wand.gif \( wizard.gif -rotate 30 \) +append images.gif
+    </div>
+  </div>
+
+  <div id="output" class="card im-card p-4">
+    <h5 class="fw-bold mb-2">Sequential Output Formatting</h5>
+    <p class="small text-body-secondary mb-3">Extract property strings or format multi-page sequence outputs dynamically:</p>
+    <div class="bg-dark text-light p-3 rounded font-mono small mb-2">
+      $ magick rose: -set filename:area '%wx%h' 'rose-%[filename:area].png'
+    </div>
+    <div class="bg-dark text-light p-3 rounded font-mono small">
+      $ magick *.jpg +adjoin page-%d.pdf
+    </div>
+  </div>
+</section>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="../security-policy/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/command-line-processing/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:17 GMT -->
+</html>

@@ -5,6 +5,15 @@ edition = "2024"
 description = "Bir - bulk image resizer"
 license = "Apache-2.0"
 
+[build-dependencies]
+bindgen = "0.72"
+cmake = "0.1"
+pkg-config = "0.3"
+
+[features]
+default = ["vendored"]
+vendored = []
+
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.5", features = ["derive"] }

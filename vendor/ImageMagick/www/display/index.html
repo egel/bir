@@ -1,0 +1,919 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/display/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:33 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | Command-line Tools: Display</title>
+  <meta name="description" content="Use ImageMagick’s display program to showcase images or sequences on any X server. Explore example usages, terminal commands, and an interactive option summary.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | Command-line Tools: Display">
+  <meta property="og:description" content="Use ImageMagick’s display program to showcase images or sequences on any X server. Explore example usages, terminal commands, and an interactive option summary.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/display/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Use ImageMagick’s display program to showcase images or sequences on any X server. Explore example usages, terminal commands, and an interactive option summary.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-processing/index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/display/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">Command-line Tools: Display</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Use ImageMagick’s display program to showcase images or sequences on any X server. Explore example usages, terminal commands, and an interactive option summary.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="../command-line-processing/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <!-- Page Header & Quick Navigation -->
+<div class="mb-5 border-bottom pb-4">
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <a href="#usage" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-2">
+      <i class="bi bi-play-circle-fill"></i> Example Usage
+    </a>
+    <a href="#options" class="btn btn-sm btn-outline-secondary rounded-pill px-3 d-inline-flex align-items-center gap-2">
+      <i class="bi bi-list-nested"></i> Option Summary
+    </a>
+  </div>
+  <p class="lead text-body-secondary mb-0">
+    Use the <code class="text-primary fw-semibold">display</code> program to display an image or image sequence on any X server. See <a href="../command-line-processing/index.html" class="text-decoration-none">Command Line Processing</a> for advice on how to structure your <code class="text-primary fw-semibold">display</code> command or see below for example usages.
+  </p>
+</div>
+<!-- Section: Example Usage -->
+<section id="usage" class="mb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <h2 class="h3 fw-bold mb-0">Example Usage</h2>
+    <a href="#usage" class="text-body-tertiary text-decoration-none"><i class="bi bi-link-45deg fs-4"></i></a>
+  </div>
+  <p class="text-body-secondary mb-3">
+    We list a few examples of the <code class="text-primary">display</code> command here to illustrate its usefulness and ease of use. To get started, let's display an image in the JPEG format:
+  </p>
+  <!-- Terminal Code Block 1 -->
+  <div class="terminal-card mb-3">
+    <div class="terminal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <div class="terminal-dot bg-danger"></div>
+        <div class="terminal-dot bg-warning"></div>
+        <div class="terminal-dot bg-success"></div>
+        <span class="small text-secondary font-mono ms-2">display-jpeg.sh</span>
+      </div>
+      <button class="btn btn-sm text-secondary border-0 p-0" onclick="navigator.clipboard.writeText('https://imagemagick.org/display/magick display rose.jpg')" title="Copy Command">
+        <i class="bi bi-clipboard"></i>
+      </button>
+    </div>
+    <div class="p-3">
+      <pre class="mb-0 text-light font-mono"><code><span class="text-success">$</span> magick display rose.jpg</code></pre>
+    </div>
+  </div>
+  <p class="text-body-secondary mb-3">To tile a slate texture onto the root window, use:</p>
+  <!-- Terminal Code Block 2 -->
+  <div class="terminal-card mb-3">
+    <div class="terminal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <div class="terminal-dot bg-danger"></div>
+        <div class="terminal-dot bg-warning"></div>
+        <div class="terminal-dot bg-success"></div>
+        <span class="small text-secondary font-mono ms-2">display-root.sh</span>
+      </div>
+      <button class="btn btn-sm text-secondary border-0 p-0" onclick="navigator.clipboard.writeText('https://imagemagick.org/display/magick display -size 1280x1024 -window root slate.png')" title="Copy Command">
+        <i class="bi bi-clipboard"></i>
+      </button>
+    </div>
+    <div class="p-3">
+      <pre class="mb-0 text-light font-mono"><code><span class="text-success">$</span> magick display -size 1280x1024 -window root slate.png</code></pre>
+    </div>
+  </div>
+  <p class="text-body-secondary mb-3">To display a visual image directory of all your JPEG images, use:</p>
+  <!-- Terminal Code Block 3 -->
+  <div class="terminal-card mb-3">
+    <div class="terminal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <div class="terminal-dot bg-danger"></div>
+        <div class="terminal-dot bg-warning"></div>
+        <div class="terminal-dot bg-success"></div>
+        <span class="small text-secondary font-mono ms-2">display-vid.sh</span>
+      </div>
+      <button class="btn btn-sm text-secondary border-0 p-0" onclick="navigator.clipboard.writeText('magick display \'vid:*.jpg\'')" title="Copy Command">
+        <i class="bi bi-clipboard"></i>
+      </button>
+    </div>
+    <div class="p-3">
+      <pre class="mb-0 text-light font-mono"><code><span class="text-success">$</span> magick display 'vid:*.jpg'</code></pre>
+    </div>
+  </div>
+  <p class="text-body-secondary mb-3">
+    The display program defaults to the X screen resolution. To display vector formats at their intended size, override the default resolution:
+  </p>
+  <!-- Terminal Code Block 4 -->
+  <div class="terminal-card mb-4">
+    <div class="terminal-header d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <div class="terminal-dot bg-danger"></div>
+        <div class="terminal-dot bg-warning"></div>
+        <div class="terminal-dot bg-success"></div>
+        <span class="small text-secondary font-mono ms-2">display-density.sh</span>
+      </div>
+      <button class="btn btn-sm text-secondary border-0 p-0" onclick="navigator.clipboard.writeText('https://imagemagick.org/display/magick display -density 72 drawing.svg')" title="Copy Command">
+        <i class="bi bi-clipboard"></i>
+      </button>
+    </div>
+    <div class="p-3">
+      <pre class="mb-0 text-light font-mono"><code><span class="text-success">$</span> magick display -density 72 drawing.svg</code></pre>
+    </div>
+  </div>
+  <div class="alert alert-info d-flex align-items-center gap-3 border-0 bg-info bg-opacity-10 text-info-emphasis rounded-3" role="alert">
+    <i class="bi bi-info-circle-fill fs-4 flex-shrink-0"></i>
+    <div>
+      You can find additional examples of using <code>display</code> in <a href="https://usage.imagemagick.org/" target="_blank" class="alert-link">Examples of ImageMagick Usage</a>.
+    </div>
+  </div>
+</section>
+<!-- Section: Option Summary -->
+<section id="options" class="mb-5">
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <h2 class="h3 fw-bold mb-0">Option Summary</h2>
+      <a href="#options" class="text-body-tertiary text-decoration-none"><i class="bi bi-link-45deg fs-4"></i></a>
+    </div>
+    <!-- Live Search Filter for Options -->
+    <div class="input-group input-group-sm" style="max-width: 280px;">
+      <span class="input-group-text bg-body-tertiary border-end-0"><i class="bi bi-filter text-secondary"></i></span>
+      <input type="text" id="optionSearch" class="form-control border-start-0 bg-body-tertiary" placeholder="Filter options..." onkeyup="filterOptions()">
+    </div>
+  </div>
+  <p class="text-body-secondary mb-3">
+    The <code class="text-primary">display</code> command recognizes these options. Click on an option to get more details about how that option works.
+  </p>
+  <div class="card im-card overflow-hidden shadow-sm">
+    <div class="table-responsive" style="max-height: 65vh;">
+      <table class="table table-hover table-striped align-middle mb-0" id="optionsTable">
+        <thead class="table-light sticky-top shadow-sm">
+          <tr>
+            <th scope="col" style="width: 35%;">Option</th>
+            <th scope="col" style="width: 65%;">Description</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono small">
+          <tr>
+            <td><a href="../command-line-options/index.html#alpha" class="fw-semibold text-decoration-none">-alpha</a></td>
+            <td class="font-sans">on, activate, off, deactivate, set, opaque, copy, transparent, extract, background, or shape the alpha channel</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#antialias" class="fw-semibold text-decoration-none">-antialias</a></td>
+            <td class="font-sans">remove pixel-aliasing</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#authenticate" class="fw-semibold text-decoration-none">-authenticate <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">decrypt image with this password</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#backdrop" class="fw-semibold text-decoration-none">-backdrop</a></td>
+            <td class="font-sans">display image centered on a backdrop</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#background" class="fw-semibold text-decoration-none">-background <var class="text-secondary">&lt;color&gt;</var></a></td>
+            <td class="font-sans">background color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#border" class="fw-semibold text-decoration-none">-border <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">surround image with a border of color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#bordercolor" class="fw-semibold text-decoration-none">-bordercolor <var class="text-secondary">&lt;color&gt;</var></a></td>
+            <td class="font-sans">border color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#channel" class="fw-semibold text-decoration-none">-channel <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">apply option to select image channels</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#clip" class="fw-semibold text-decoration-none">-clip</a></td>
+            <td class="font-sans">clip along the first path from the 8BIM profile</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#clip-path" class="fw-semibold text-decoration-none">-clip-path <var class="text-secondary">&lt;id&gt;</var></a></td>
+            <td class="font-sans">clip along a named path from the 8BIM profile</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#coalesce" class="fw-semibold text-decoration-none">-coalesce</a></td>
+            <td class="font-sans">merge a sequence of images</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#colormap" class="fw-semibold text-decoration-none">-colormap <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">Shared or Private</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#colors" class="fw-semibold text-decoration-none">-colors <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">preferred number of colors in the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#colorspace" class="fw-semibold text-decoration-none">-colorspace <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">set image colorspace</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#comment" class="fw-semibold text-decoration-none">-comment <var class="text-secondary">&lt;string&gt;</var></a></td>
+            <td class="font-sans">annotate image with comment</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#compress" class="fw-semibold text-decoration-none">-compress <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">image compression type</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#contrast" class="fw-semibold text-decoration-none">-contrast</a></td>
+            <td class="font-sans">enhance or reduce the image contrast</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#crop" class="fw-semibold text-decoration-none">-crop <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">preferred size and location of the cropped image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#debug" class="fw-semibold text-decoration-none">-debug <var class="text-secondary">&lt;events&gt;</var></a></td>
+            <td class="font-sans">display copious debugging information</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#decipher" class="fw-semibold text-decoration-none">-decipher <var class="text-secondary">&lt;filename&gt;</var></a></td>
+            <td class="font-sans">convert cipher pixels to plain</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#define" class="fw-semibold text-decoration-none">-define <var class="text-secondary">&lt;format:option&gt;</var></a></td>
+            <td class="font-sans">define one or more image format options</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#delay" class="fw-semibold text-decoration-none">-delay <var class="text-secondary">&lt;centiseconds&gt;</var></a></td>
+            <td class="font-sans">display the next image after pausing</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#density" class="fw-semibold text-decoration-none">-density <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">horizontal and vertical density of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#depth" class="fw-semibold text-decoration-none">-depth <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">image depth</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#despeckle" class="fw-semibold text-decoration-none">-despeckle</a></td>
+            <td class="font-sans">reduce the speckles within an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#display" class="fw-semibold text-decoration-none">-display <var class="text-secondary">&lt;server&gt;</var></a></td>
+            <td class="font-sans">get image or font from this X server</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#dispose" class="fw-semibold text-decoration-none">-dispose <var class="text-secondary">&lt;method&gt;</var></a></td>
+            <td class="font-sans">layer disposal method</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#dither" class="fw-semibold text-decoration-none">-dither <var class="text-secondary">&lt;method&gt;</var></a></td>
+            <td class="font-sans">apply error diffusion to image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#edge" class="fw-semibold text-decoration-none">-edge <var class="text-secondary">&lt;radius&gt;</var></a></td>
+            <td class="font-sans">apply a filter to detect edges in the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#endian" class="fw-semibold text-decoration-none">-endian <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">endianness (MSB or LSB) of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#enhance" class="fw-semibold text-decoration-none">-enhance</a></td>
+            <td class="font-sans">apply a digital filter to enhance a noisy image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#equalize" class="fw-semibold text-decoration-none">-equalize</a></td>
+            <td class="font-sans">perform histogram equalization to an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#extract" class="fw-semibold text-decoration-none">-extract <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">extract area from image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#filter" class="fw-semibold text-decoration-none">-filter <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">use this filter when resizing an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#flatten" class="fw-semibold text-decoration-none">-flatten</a></td>
+            <td class="font-sans">flatten a sequence of images</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#flip" class="fw-semibold text-decoration-none">-flip</a></td>
+            <td class="font-sans">flip image in the vertical direction</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#flop" class="fw-semibold text-decoration-none">-flop</a></td>
+            <td class="font-sans">flop image in the horizontal direction</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#frame" class="fw-semibold text-decoration-none">-frame <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">surround image with an ornamental border</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#fuzz" class="fw-semibold text-decoration-none">-fuzz <var class="text-secondary">&lt;distance&gt;</var></a></td>
+            <td class="font-sans">colors within this distance are considered equal</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#gamma" class="fw-semibold text-decoration-none">-gamma <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">level of gamma correction</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#geometry" class="fw-semibold text-decoration-none">-geometry <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">preferred size or location of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#gravity" class="fw-semibold text-decoration-none">-gravity <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">horizontal and vertical backdrop placement</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#help" class="fw-semibold text-decoration-none">-help</a></td>
+            <td class="font-sans">print program options</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#identify" class="fw-semibold text-decoration-none">-identify</a></td>
+            <td class="font-sans">identify the format and characteristics of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#immutable" class="fw-semibold text-decoration-none">-immutable <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">prohibit image edits</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#interlace" class="fw-semibold text-decoration-none">-interlace <var class="text-secondary">&lt;type&gt;</var></a></td>
+            <td class="font-sans">type of image interlacing scheme</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#interpolate" class="fw-semibold text-decoration-none">-interpolate <var class="text-secondary">&lt;method&gt;</var></a></td>
+            <td class="font-sans">pixel color interpolation method</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#label" class="fw-semibold text-decoration-none">-label <var class="text-secondary">&lt;name&gt;</var></a></td>
+            <td class="font-sans">assign a label to an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#limit" class="fw-semibold text-decoration-none">-limit <var class="text-secondary">&lt;type value&gt;</var></a></td>
+            <td class="font-sans">pixel cache resource limit</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#log" class="fw-semibold text-decoration-none">-log <var class="text-secondary">&lt;format&gt;</var></a></td>
+            <td class="font-sans">format of debugging information</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#map" class="fw-semibold text-decoration-none">-map <var class="text-secondary">&lt;filename&gt;</var></a></td>
+            <td class="font-sans">transform image colors to match this set of colors</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#mattecolor" class="fw-semibold text-decoration-none">-mattecolor <var class="text-secondary">&lt;color&gt;</var></a></td>
+            <td class="font-sans">frame color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#monitor" class="fw-semibold text-decoration-none">-monitor</a></td>
+            <td class="font-sans">monitor progress</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#monochrome" class="fw-semibold text-decoration-none">-monochrome</a></td>
+            <td class="font-sans">transform image to black and white</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#negate" class="fw-semibold text-decoration-none">-negate</a></td>
+            <td class="font-sans">replace each pixel with its complementary color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#normalize" class="fw-semibold text-decoration-none">-normalize</a></td>
+            <td class="font-sans">transform image to span the full range of colors</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#page" class="fw-semibold text-decoration-none">-page <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">size and location of an image canvas (setting)</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#profile" class="fw-semibold text-decoration-none">-profile <var class="text-secondary">&lt;filename&gt;</var></a></td>
+            <td class="font-sans">add, delete, or apply an image profile</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#quantize" class="fw-semibold text-decoration-none">-quantize <var class="text-secondary">&lt;colorspace&gt;</var></a></td>
+            <td class="font-sans">reduce image colors in this colorspace</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#quiet" class="fw-semibold text-decoration-none">-quiet</a></td>
+            <td class="font-sans">suppress all warning messages</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#raise" class="fw-semibold text-decoration-none">-raise <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">lighten/darken image edges to create a 3-D effect</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#regard-warnings" class="fw-semibold text-decoration-none">-regard-warnings</a></td>
+            <td class="font-sans">pay attention to warning messages</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#remote" class="fw-semibold text-decoration-none">-remote <var class="text-secondary">&lt;command&gt;</var></a></td>
+            <td class="font-sans">execute a command in a remote display process</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#resample" class="fw-semibold text-decoration-none">-resample <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">change the resolution of an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#resize" class="fw-semibold text-decoration-none">-resize <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">resize the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#respect-parentheses" class="fw-semibold text-decoration-none">-respect-parentheses</a></td>
+            <td class="font-sans">settings remain in effect until parenthesis boundary</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#roll" class="fw-semibold text-decoration-none">-roll <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">roll an image vertically or horizontally</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#rotate" class="fw-semibold text-decoration-none">-rotate <var class="text-secondary">&lt;degrees&gt;</var></a></td>
+            <td class="font-sans">apply Paeth rotation to the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#sample" class="fw-semibold text-decoration-none">-sample <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">scale image with pixel sampling</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#sampling-factor" class="fw-semibold text-decoration-none">-sampling-factor <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">horizontal and vertical sampling factor</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#scene" class="fw-semibold text-decoration-none">-scene <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">image scene number</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#seed" class="fw-semibold text-decoration-none">-seed <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">seed a new sequence of pseudo-random numbers</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#segment" class="fw-semibold text-decoration-none">-segment <var class="text-secondary">&lt;values&gt;</var></a></td>
+            <td class="font-sans">segment an image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#set" class="fw-semibold text-decoration-none">-set <var class="text-secondary">&lt;attribute value&gt;</var></a></td>
+            <td class="font-sans">set an image attribute</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#sharpen" class="fw-semibold text-decoration-none">-sharpen <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">sharpen the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#size" class="fw-semibold text-decoration-none">-size <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">width and height of image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#strip" class="fw-semibold text-decoration-none">-strip</a></td>
+            <td class="font-sans">strip image of all profiles and comments</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#thumbnail" class="fw-semibold text-decoration-none">-thumbnail <var class="text-secondary">&lt;geometry&gt;</var></a></td>
+            <td class="font-sans">create a thumbnail of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#transparent-color" class="fw-semibold text-decoration-none">-transparent-color <var class="text-secondary">&lt;color&gt;</var></a></td>
+            <td class="font-sans">transparent color</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#black-threshold" class="fw-semibold text-decoration-none">-black-threshold <var class="text-secondary">&lt;value&gt;</var></a></td>
+            <td class="font-sans">force all pixels below the threshold into black</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#trim" class="fw-semibold text-decoration-none">-trim</a></td>
+            <td class="font-sans">trim image edges</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#update" class="fw-semibold text-decoration-none">-update <var class="text-secondary">&lt;seconds&gt;</var></a></td>
+            <td class="font-sans">detect when image file is modified and redisplay</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#verbose" class="fw-semibold text-decoration-none">-verbose</a></td>
+            <td class="font-sans">print detailed information about the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#version" class="fw-semibold text-decoration-none">-version</a></td>
+            <td class="font-sans">print version information</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#virtual-pixel" class="fw-semibold text-decoration-none">-virtual-pixel <var class="text-secondary">&lt;method&gt;</var></a></td>
+            <td class="font-sans">access method for pixels outside the boundaries of the image</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#visual" class="fw-semibold text-decoration-none">-visual</a></td>
+            <td class="font-sans">display image using this visual type</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#write" class="fw-semibold text-decoration-none">-window <var class="text-secondary">&lt;id&gt;</var></a></td>
+            <td class="font-sans">display image to background of this window</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#write" class="fw-semibold text-decoration-none">-window-group <var class="text-secondary">&lt;id&gt;</var></a></td>
+            <td class="font-sans">exit program when this window id is destroyed</td>
+          </tr>
+          <tr>
+            <td><a href="../command-line-options/index.html#write" class="fw-semibold text-decoration-none">-write <var class="text-secondary">&lt;filename&gt;</var></a></td>
+            <td class="font-sans">write images to this file</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<script>
+  function filterOptions() {
+    const input = document.getElementById('optionSearch');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('optionsTable');
+    const tr = table.getElementsByTagName('tr');
+    for (let i = 1; i < tr.length; i++) {
+      const tdOption = tr[i].getElementsByTagName('td')[0];
+      const tdDesc = tr[i].getElementsByTagName('td')[1];
+      if (tdOption || tdDesc) {
+        const optionText = tdOption.textContent || tdOption.innerText;
+        const descText = tdDesc.textContent || tdDesc.innerText;
+        if (optionText.toLowerCase().indexOf(filter) > -1 || descText.toLowerCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="../security-policy/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/display/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:34 GMT -->
+</html>

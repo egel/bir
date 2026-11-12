@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/security-policy/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:18 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | Security Policy</title>
+  <meta name="description" content="Learn how to configure and enforce ImageMagick’s security policy to balance functionality with protection. Explore open, limited, secure, and websafe options, along with resource limits, coder restrictions, and best practices for securing containers, servers, and web applications.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | Security Policy">
+  <meta property="og:description" content="Learn how to configure and enforce ImageMagick’s security policy to balance functionality with protection. Explore open, limited, secure, and websafe options, along with resource limits, coder restrictions, and best practices for securing containers, servers, and web applications.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/security-policy/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Learn how to configure and enforce ImageMagick’s security policy to balance functionality with protection. Explore open, limited, secure, and websafe options, along with resource limits, coder restrictions, and best practices for securing containers, servers, and web applications.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-processing/index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/security-policy/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">Security Policy</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Learn how to configure and enforce ImageMagick’s security policy to balance functionality with protection. Explore open, limited, secure, and websafe options, along with resource limits, coder restrictions, and best practices for securing containers, servers, and web applications.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="../command-line-processing/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <div class="security-policy-content">
+  <!-- Table of Contents / Quick Nav -->
+  <div class="card im-card p-3 mb-4 bg-body-tertiary border-0">
+    <p class="text-center mb-0 small fw-medium">
+      <a href="#policy" class="text-decoration-none">Security Policy</a> • 
+      <a href="#environment" class="text-decoration-none">Environment Selection</a> • 
+      <a href="#example" class="text-decoration-none">Example Policy</a> • 
+      <a href="#discussion" class="text-decoration-none">Discussion</a> • 
+      <a href="#synchronize" class="text-decoration-none">Pixel Cache Sync</a> • 
+      <a href="#zero-configuration" class="text-decoration-none">Zero Config</a> • 
+      <a href="#other" class="text-decoration-none">Best Practices</a>
+    </p>
+  </div>
+  <!-- Intro Alert -->
+  <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert" id="policy">
+    <h4 class="alert-heading h5 fw-bold mb-2"><i class="bi bi-shield-lock-fill me-2"></i>ImageMagick Security Policy</h4>
+    <p class="mb-0 small">Establish a security policy tailored to your environment before deploying ImageMagick. ImageMagick operates on an <strong>"everything allowed unless denied"</strong> model, where the <em>last matching policy wins</em>. Place broad deny rules first, followed by specific exceptions, and review rule ordering carefully to prevent unintended authorizations.</p>
+  </div>
+  <p class="lead text-body">ImageMagick is intentionally open by default, a design choice optimized for controlled, sandboxed environments like Docker containers and isolated application pipelines.</p>
+  <p>Security involves balancing protection against potential vulnerabilities with practical operational needs. ImageMagick's security policy acts as the control point between strict lockdown and convenience, letting you dictate which features, coders, and operations are permitted.</p>
+  <h3 class="h5 fw-bold mt-4 mb-3">A well-designed policy empowers you to:</h3>
+  <ul class="list-unstyled d-flex flex-column gap-2 mb-4">
+    <li class="d-flex align-items-start gap-2"><i class="bi bi-check-circle-fill text-success mt-1"></i><span><strong>Limit or disable high-risk coders</strong> and external operations to minimize attack surfaces.</span></li>
+    <li class="d-flex align-items-start gap-2"><i class="bi bi-check-circle-fill text-success mt-1"></i><span><strong>Constrain resource usage</strong> to prevent denial-of-service (DoS) attacks and resource exhaustion.</span></li>
+    <li class="d-flex align-items-start gap-2"><i class="bi bi-check-circle-fill text-success mt-1"></i><span><strong>Define strict input boundaries</strong> for what file types and formats ImageMagick may process.</span></li>
+    <li class="d-flex align-items-start gap-2"><i class="bi bi-check-circle-fill text-success mt-1"></i><span><strong>Tailor defenses</strong> to your specific threat model rather than relying on a rigid, one-size-fits-all setup.</span></li>
+  </ul>
+  <p>Because ImageMagick ships in an open state for easy integration into containers and automated build pipelines, administrators must tighten policies to match production requirements. <strong class="text-warning-emphasis bg-warning-subtle px-1 rounded">The more untrusted input your application handles, the more restrictive your policy must be.</strong></p>
+  <p>Policies are evaluated using a "last matching policy wins" model. For filesystem paths, ImageMagick evaluates canonical (fully resolved) paths and enforces canonical denies to block bypass attempts via symlinks, alternate representations, or path traversal tricks.</p>
+  <hr class="my-4 text-muted opacity-25">
+  <h2 class="h4 fw-bold mt-4 mb-3" id="environment"><i class="bi bi-sliders me-2 text-primary"></i>Selecting the Right Security Policy for Your Environment</h2>
+  <p>To ensure optimal security in public-facing applications, you can restrict ImageMagick exclusively to web-safe formats like GIF, JPEG, and PNG. Alternatively, you can customize limits for memory allocation, allowed read/write paths, sequence frame counts, workflow runtime, and pixel cache disk space.</p>
+  <p>Setting resource limits protects against malicious or malformed files—such as an internet-sourced image crafted to declare 20,000×20,000 dimensions. Without limits, such files can exhaust memory and disk space, causing system slowdowns or crashes. You can configure these limits in your <code>policy.xml</code> file.</p>
+  <p>Environments vary wildly: a sandboxed internal service with abundant RAM has different security needs than a public web server processing user uploads. To simplify hardening, ImageMagick provides four pre-built security policies (available as of version 7.1.1-16):</p>
+  <div class="row g-3 my-3">
+    <div class="col-md-6">
+      <div class="card im-card h-100 p-3">
+        <h5 class="fw-bold text-primary"><a href="../source/policy-open.xml" class="text-decoration-none">open</a></h5>
+        <p class="small text-body-secondary mb-0">The default profile. Ideal for secure, firewalled environments or Docker containers where broad functionality and convenience are prioritized over strict lockdown.</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card im-card h-100 p-3">
+        <h5 class="fw-bold text-warning"><a href="../source/policy-limited.xml" class="text-decoration-none">limited</a></h5>
+        <p class="small text-body-secondary mb-0">Strikes a balance between usability and security. Disables hazardous coders (like SVG or HTTP) and applies adjustable resource constraints on memory, storage, and runtime.</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card im-card h-100 p-3">
+        <h5 class="fw-bold text-danger"><a href="../source/policy-secure.xml" class="text-decoration-none">secure</a></h5>
+        <p class="small text-body-secondary mb-0">A rigorous profile enforcing strict resource caps, explicit read/write pathways, sequence limits, and disabled high-risk capabilities for hardened deployments.</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card im-card h-100 p-3">
+        <h5 class="fw-bold text-success"><a href="../source/policy-websafe.xml" class="text-decoration-none">websafe</a></h5>
+        <p class="small text-body-secondary mb-0">Designed for public websites. Restricts I/O strictly to GIF, JPEG, and PNG formats while blocking image filters and indirect reads to prevent exploitation.</p>
+      </div>
+    </div>
+  </div>
+  <p class="small text-muted mt-2">Under Linux, select your policy using the configure script option <code>--with-security-policy={open,limited,secure,websafe}</code>. Under Windows, select it during the GUI configuration app workflow.</p>
+  <p>We encourage reviewing every rule in your <code>policy.xml</code>. Finding the right balance ensures robust defense without breaking legitimate image processing pipelines.</p>
+  <div class="p-3 bg-body-tertiary rounded border border-secondary-subtle my-3">
+    <p class="mb-0 small"><i class="bi bi-tools text-warning me-2"></i><strong>Policy Evaluator:</strong> Doyensec provides a helpful interactive security policy auditor at <a href="https://imagemagick-secevaluator.doyensec.com/" target="_blank" rel="noopener">imagemagick-secevaluator.doyensec.com</a>.</p>
+  </div>
+  <hr class="my-4 text-muted opacity-25">
+  <h2 class="h4 fw-bold mt-4 mb-3" id="example"><i class="bi bi-file-earmark-code me-2 text-primary"></i>Example Hardened Security Policy</h2>
+  <p>Below is a production-ready example of a hardened security policy tailored for public-facing web applications:</p>
+  <div class="card terminal-card mb-3">
+    <div class="terminal-header">
+      <div class="terminal-dot bg-danger"></div>
+      <div class="terminal-dot bg-warning"></div>
+      <div class="terminal-dot bg-success"></div>
+      <span class="small text-secondary font-mono ms-2">policy.xml</span>
+    </div>
+    <div class="p-3 bg-body text-body font-mono small overflow-auto" style="max-height: 500px;">
+<pre class="mb-0"><code>&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;!DOCTYPE policymap [
+  &lt;!ELEMENT policymap (policy)*>
+  &lt;!ATTLIST policymap
+    xmlns CDATA #FIXED ""
+  >
+  &lt;!ELEMENT policy EMPTY>
+  &lt;!ATTLIST policy
+    xmlns   CDATA   #FIXED ""
+    domain  NMTOKEN #REQUIRED
+    name    NMTOKEN #IMPLIED
+    pattern CDATA   #IMPLIED
+    rights  NMTOKEN #IMPLIED
+    stealth NMTOKEN #IMPLIED
+    value   CDATA   #IMPLIED
+  >
+]>
+&lt;policymap>
+  &lt;!-- Resource Limits -->
+  &lt;policy domain="resource" name="thread" value="4"/>
+  &lt;policy domain="resource" name="time" value="60"/>
+  &lt;policy domain="resource" name="file" value="768"/>
+  &lt;policy domain="resource" name="memory" value="256MiB"/>
+  &lt;policy domain="resource" name="map" value="512MiB"/>
+  &lt;policy domain="resource" name="area" value="32MP"/>
+  &lt;policy domain="resource" name="disk" value="1GiB"/>
+  &lt;policy domain="resource" name="list-length" value="16"/>
+  &lt;policy domain="resource" name="width" value="4KP"/>
+  &lt;policy domain="resource" name="height" value="4KP"/>
+  &lt;policy domain="resource" name="throttle" value="2"/>
+  &lt;policy domain="resource" name="dynamic-throttle" value="false"/>
+  &lt;!-- Pixel Cache Security -->
+  &lt;policy domain="cache" name="memory-map" value="anonymous"/>
+  &lt;policy domain="cache" name="synchronize" value="true"/>
+  &lt;!-- Delegate and Filter Restrictions -->
+  &lt;policy domain="delegate" rights="none" pattern="*"/>
+  &lt;policy domain="filter" rights="none" pattern="*"/>
+  &lt;!-- Path Restrictions -->
+  &lt;policy domain="path" rights="none" pattern="-"/>
+  &lt;policy domain="path" rights="none" pattern="[Ff][Dd]:*"/>
+  &lt;policy domain="path" rights="none" pattern="/etc/*"/>
+  &lt;policy domain="path" rights="none" pattern="*../*"/>
+  &lt;policy domain="path" rights="none" pattern="@*"/>
+  &lt;policy domain="path" rights="none" pattern="|*"/>
+  &lt;!-- Module Restrictions -->
+  &lt;policy domain="module" rights="none" pattern="*"/>
+  &lt;policy domain="module" rights="read | write" pattern="{GIF,JPEG,PNG,WEBP}"/>
+  &lt;!-- System Security Options -->
+  &lt;policy domain="system" name="shred" value="1"/>
+  &lt;policy domain="system" name="memory-map" value="anonymous"/>
+  &lt;policy domain="system" name="max-memory-request" value="256MiB"/>
+  &lt;policy domain="system" name="max-profile-size" value="16MiB"/>
+  &lt;policy domain="system" name="max-profile-count" value="16"/>
+  &lt;policy domain="system" name="symlink" rights="none" pattern="follow"/>
+  &lt;policy domain="system" name="svg" rights="none" pattern="substitute-entities"/>
+&lt;/policymap></code></pre>
+    </div>
+  </div>
+  <hr class="my-4 text-muted opacity-25">
+  <h2 class="h4 fw-bold mt-4 mb-3" id="discussion"><i class="bi bi-chat-left-text me-2 text-primary"></i>Security Policy Discussion & Advanced Tuning</h2>
+  <p>Starting with ImageMagick 7.0.1-8, external delegates can be globally disabled by setting the pattern to <code>"*"</code>. Glob patterns are case-sensitive prior to version 7.1.1-16, so coders must be uppercase (e.g., <code>"EPS"</code>) or use case-insensitive patterns like <code>[Pp][Nn][Gg]</code>.</p>
+  <p>When restricting coders like HTTPS, attempting an unauthorized operation returns an error:</p>
+  <div class="card terminal-card mb-3">
+    <div class="p-3 bg-body font-mono small text-secondary">
+      $ magick https://imagemagick.org/image/wizard.png wizard.jpg<br>
+      magick: attempt to perform an operation not allowed by the security policy `HTTPS'<br>
+      magick: no images defined `wizard.jpg'
+    </div>
+  </div>
+  <p>You can also use anonymous memory mapping and buffer shredding to enhance data hygiene:</p>
+  <div class="card terminal-card mb-3">
+    <div class="p-3 bg-body font-mono small">
+      &lt;policy domain="system" name="memory-map" value="anonymous"/&gt;<br>
+      &lt;policy domain="cache" name="memory-map" value="anonymous"/&gt;<br>
+      &lt;policy domain="system" name="shred" value="1"/&gt;
+    </div>
+  </div>
+  <p>To verify your active security policy configuration at any time, run:</p>
+  <div class="card terminal-card mb-3">
+    <div class="p-3 bg-body font-mono small text-secondary">
+      $ magick identify -list policy
+    </div>
+  </div>
+  <hr class="my-4 text-muted opacity-25">
+  <h2 class="h4 fw-bold mt-4 mb-3" id="synchronize"><i class="bi bi-hdd me-2 text-primary"></i>Pixel Cache Synchronize Policy</h2>
+  <p>When writing pixels to disk, ImageMagick preallocates and memory-maps files for performance. However, if disk space runs out during population, the OS may trigger a <code>SIGBUS</code> signal. Setting <code>synchronize</code> to <code>true</code> ensures data is flushed and synchronized immediately, preventing crashes and offering early error reporting:</p>
+  <div class="card terminal-card mb-3">
+    <div class="p-3 bg-body font-mono small">
+      &lt;policy domain="cache" name="synchronize" value="true"/&gt;
+    </div>
+  </div>
+  <h2 class="h4 fw-bold mt-4 mb-3" id="zero-configuration"><i class="bi bi-cpu me-2 text-primary"></i>Zero Configuration Security Policy</h2>
+  <p>For embedded builds that prohibit external configuration files, you can embed policies directly into the source module <code>MagickCore/policy-private.h</code> before compilation:</p>
+  <div class="card terminal-card mb-3">
+    <div class="p-3 bg-body font-mono small">
+      static const char *ZeroConfigurationPolicy = \<br>
+      "&lt;policymap&gt; &lt;policy domain=\"module\" rights=\"none\" pattern=\"MVG\"/&gt; &lt;/policymap&gt;";
+    </div>
+  </div>
+  <h2 class="h4 fw-bold mt-4 mb-3" id="other"><i class="bi bi-shield-check me-2 text-primary"></i>Other Security Best Practices</h2>
+  <ol class="list-group list-group-numbered list-group-flush mb-4">
+    <li class="list-group-item bg-transparent"><strong>Use web-safe image formats:</strong> Restrict processing strictly to trusted formats like GIF, JPEG, and PNG.</li>
+    <li class="list-group-item bg-transparent"><strong>Customize resource limits:</strong> Control memory, disk space, and runtime bounds to thwart denial-of-service attacks.</li>
+    <li class="list-group-item bg-transparent"><strong>Deploy sandboxing:</strong> Run ImageMagick inside isolated containers or restricted user namespaces.</li>
+    <li class="list-group-item bg-transparent"><strong>Disable dangerous coders:</strong> Turn off vector graphics (MVG) and remote network fetches (HTTPS) on public instances.</li>
+    <li class="list-group-item bg-transparent"><strong>Review delegates:</strong> Audit <code>delegates.xml</code> and use absolute pathnames (e.g., <code>/usr/bin/gs</code>) to prevent path hijacking.</li>
+    <li class="list-group-item bg-transparent"><strong>Keep ImageMagick updated:</strong> Always run the latest stable release to incorporate critical security patches.</li>
+  </ol>
+</div>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/security-policy/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:19 GMT -->
+</html>

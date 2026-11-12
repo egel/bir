@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+
+
+<!-- Mirrored from https://imagemagick.org/magick-cache/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:43 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ImageMagick | MagickCache: an Efficient Image Cache</title>
+  <meta name="description" content="Understand ImageMagick’s cache architecture for efficient pixel storage and retrieval. Learn how memory, disk, and distributed caches optimize performance, reduce I/O overhead, and accelerate image processing workflows.">
+  <link rel="canonical" href="index.html">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0d1117">
+  
+  <link rel="shortcut icon" href="../image/wand.png" type="image/png">
+  <link rel="apple-touch-icon" href="../image/wand.png" type="image/png">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --im-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --im-font-mono: 'Fira Code', monospace;
+      --im-primary: #8b5cf6;
+      --im-primary-hover: #7c3aed;
+      --im-accent: #f59e0b;
+      --im-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+
+    body {
+      font-family: var(--im-font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, kbd, pre, .font-mono {
+      font-family: var(--im-font-mono) !important;
+    }
+
+    /* Modern Navbar */
+    .im-navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background-color: rgba(15, 23, 42, 0.85) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-navbar .nav-link {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      transition: all 0.2s ease;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.375rem;
+    }
+
+    .im-navbar .nav-link:hover,
+    .im-navbar .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .im-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .im-hero {
+      background: var(--im-bg-gradient);
+      color: #ffffff;
+      padding: 4rem 0 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    /* Terminal Widget */
+    .terminal-card {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Cards & Container */
+    .im-card {
+      border: 1px solid var(--bs-border-color-translucent);
+      border-radius: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bs-body-bg);
+    }
+
+    .im-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Footer */
+    .im-footer {
+      margin-top: auto;
+      background: #090d16;
+      color: rgba(255, 255, 255, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .im-footer a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .im-footer a:hover {
+      color: var(--im-primary);
+    }
+  </style>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ImageMagick | MagickCache: an Efficient Image Cache">
+  <meta property="og:description" content="Understand ImageMagick’s cache architecture for efficient pixel storage and retrieval. Learn how memory, disk, and distributed caches optimize performance, reduce I/O overhead, and accelerate image processing workflows.">
+  <meta property="og:image" content="../image/logo.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImageMagick",
+    "url": "https://imagemagick.org/magick-cache/",
+    "image": "https://imagemagick.org/image/logo.png",
+    "description": "Understand ImageMagick’s cache architecture for efficient pixel storage and retrieval. Learn how memory, disk, and distributed caches optimize performance, reduce I/O overhead, and accelerate image processing workflows.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Windows, macOS, Linux, Unix",
+    "softwareVersion": "7.1.2-34",
+    "license": "https://imagemagick.org/license/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script async src="https://cse.google.com/cse.js?cx=8720b81722164487b"></script>
+</head>
+
+<body>
+  <!-- Theme Init -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme') || 'auto';
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = saved === 'auto' ? (systemDark ? 'dark' : 'light') : saved;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    })();
+  </script>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top im-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand im-brand" href="../index-2.html">
+        <img src="../image/wand.png" alt="Wand Icon" width="24" height="24" class="d-inline-block align-text-top">
+        ImageMagick
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#imNavbar" aria-controls="imNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="imNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link " href="../download/index.html">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-tools/index.html">Tools</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../command-line-processing/index.html">CLI Usage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="../develop/index.html">API & Develop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" rel="noopener noreferrer" target="_blank" href="https://github.com/ImageMagick/ImageMagick/discussions">Community</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Search Trigger Modal / Input -->
+          <form class="d-flex" action="https://imagemagick.org/magick-cache/index.html" role="search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-body-tertiary border-secondary-subtle" type="search" placeholder="Search site..." name="q" aria-label="Search">
+              <button class="btn btn-outline-warning" type="submit" name="sa"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+
+          <!-- Theme Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 border-0 text-white" type="button" id="themeSelect" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-circle-half"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="themeSelect">
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('light')"><i class="bi bi-sun-fill"></i> Light</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('dark')"><i class="bi bi-moon-stars-fill"></i> Dark</button></li>
+              <li><button class="dropdown-item d-flex align-items-center gap-2" onclick="setTheme('auto')"><i class="bi bi-circle-half"></i> Auto</button></li>
+            </ul>
+          </div>
+
+          <a href="https://github.com/ImageMagick/ImageMagick" target="_blank" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 ms-1">
+            <i class="bi bi-github"></i> <span class="d-none d-xl-inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Block -->
+  <header class="im-hero mt-5 pt-5">
+    <div class="container-xl pt-3">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 mb-3 fs-7">
+            <span class="badge bg-primary">v7.1.2-34</span>
+            <span class="small text-light">Latest Stable Release</span>
+          </div>
+          <h1 class="display-4 fw-bold mb-3 tracking-tight">MagickCache: an Efficient Image Cache</h1>
+          <p class="lead text-light opacity-75 mb-4 fs-5">Understand ImageMagick’s cache architecture for efficient pixel storage and retrieval. Learn how memory, disk, and distributed caches optimize performance, reduce I/O overhead, and accelerate image processing workflows.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="../download/index.html" class="btn btn-primary btn-lg px-4 fw-semibold d-flex align-items-center gap-2 shadow">
+              <i class="bi bi-download"></i> Get ImageMagick
+            </a>
+            <a href="../command-line-processing/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold d-flex align-items-center gap-2">
+              <i class="bi bi-terminal"></i> Documentation
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Preview -->
+        <div class="col-lg-5">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dot bg-danger"></div>
+              <div class="terminal-dot bg-warning"></div>
+              <div class="terminal-dot bg-success"></div>
+              <span class="small text-secondary font-mono ms-2">quickstart.sh</span>
+            </div>
+            <div class="p-3 text-light font-mono small">
+              <div class="text-secondary"># Install via your favorite Package Manager</div>
+              <div class="text-success">$ brew install imagemagick</div>
+              <div class="text-secondary mt-2"># Convert PNG to WebP with compression</div>
+              <div>$ magick input.png -quality 85 output.webp</div>
+              <div class="text-secondary mt-2"># Resize image maintaining aspect ratio</div>
+              <div>$ magick input.jpg -resize 800x600^ output.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="py-5">
+    <div class="container-xl">
+      <div class="row g-5">
+        <!-- Main Column -->
+        <div class="col-lg-8">
+          <div class="magick-cache-container">
+  <!-- Quick Jump Navigation -->
+  <div class="card im-card p-3 mb-4 bg-body-tertiary border-0 shadow-sm">
+    <div class="d-flex justify-content-center flex-wrap gap-3 fw-semibold small text-uppercase tracking-wider">
+      <a href="#create" class="text-decoration-none text-primary"><i class="bi bi-plus-circle me-1"></i> Create Cache</a>
+      <span class="text-muted">•</span>
+      <a href="#put" class="text-decoration-none text-primary"><i class="bi bi-cloud-upload me-1"></i> Put Content</a>
+      <span class="text-muted">•</span>
+      <a href="#get" class="text-decoration-none text-primary"><i class="bi bi-cloud-download me-1"></i> Get Content</a>
+      <span class="text-muted">•</span>
+      <a href="#delete" class="text-decoration-none text-primary"><i class="bi bi-trash me-1"></i> Delete</a>
+      <span class="text-muted">•</span>
+      <a href="#identify" class="text-decoration-none text-primary"><i class="bi bi-search me-1"></i> Identify</a>
+      <span class="text-muted">•</span>
+      <a href="#security" class="text-decoration-none text-primary"><i class="bi bi-shield-lock me-1"></i> Security</a>
+    </div>
+  </div>
+  <p class="lead text-body-secondary mb-4">
+    The MagickCache provides secure methods and tools to cache images, image sequences, video, audio, or metadata in a local folder. Any content is memory-mapped for efficient retrieval. Additional efficiencies are possible by retrieving a portion of an image. Content can persist or you can assign a time-to-live (TTL) to automatically expire content when the TTL is exceeded. MagickCache supports virtually unlimited content upwards of billions of images, making it suitable as a web image service.
+  </p>
+  <p class="mb-4">
+    The MagickCache works in concert with <a href="../index-2.html" class="text-decoration-none">ImageMagick</a>. Download the <a href="https://github.com/ImageMagick/MagickCache" rel="noopener noreferrer" target="_blank" class="text-decoration-none">MagickCache <i class="bi bi-box-arrow-up-right small"></i></a> and install it. You will now want to create the cache and populate it with images, video, and associated metadata.
+  </p>
+  <!-- Create a MagickCache -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="create">
+    <a class="anchor text-decoration-none text-body" href="#create">Create a MagickCache</a>
+  </h2>
+  
+  <p>You will require a place to store and retrieve your content. Let's create a cache on our local filesystem:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt create /opt/magick-cache</code></pre>
+  
+  <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+    <div>
+      <strong>Note:</strong> Where <code>passkey.txt</code> contains your cache passkey. Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
+    </div>
+  </div>
+  <p class="mb-4">You only need to create a MagickCache once. You can, however, create more than one MagickCache with different paths.</p>
+  <p class="mb-4">Once the MagickCache is created, you will want to populate the cache with content that includes images, video, audio, or metadata.</p>
+  <!-- Put content in the MagickCache -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="put">
+    <a class="anchor text-decoration-none text-body" href="#put">Put content in the MagickCache</a>
+  </h2>
+  <p>Let's add a movie cast image to our newly created cache:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg</code></pre>
+  <p>Note, the image identifier is an IRI composed of <em>project</em>/<em>type</em>/<em>resource-path</em>. In this example, the project is <code>movies</code>, type is <code>image</code>, and the resource path is <code>mission-impossible/cast/rebecca-ferguson</code>. The path uniquely identifies a cache resource. Two different images cannot be stored with the same resource path. Instead use something like <code>mission-impossible/cast/20210508-rebecca-ferguson-1</code> and <code>mission-impossible/cast/20210508-rebecca-ferguson-2</code>.</p>
+  <p class="mt-4">Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the <code>expire</code> function. To get, expire, or delete the image, you will need to use the same resource passkey:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg</code></pre>
+  <p>Where <code>passkey.txt</code> contains your resource passkey. Don't lose your passkey. Without it, you will be unable to get, identify, expire or delete resources you own.</p>
+  <p class="mt-4">The resource passkey ensures only you and the cache owner can access your image. To prevent the cache owner from viewing its content, scramble it with:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg</code></pre>
+  <p class="mb-4">Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble the content before you store it in the cache.</p>
+  <!-- Get content from the MagickCache -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="get">
+    <a class="anchor text-decoration-none text-body" href="#get">Get content from the MagickCache</a>
+  </h2>
+  <p>Eventually you will want retrieve your content, let's get our original cast image from the cache:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png</code></pre>
+  <p>Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG format as we extract the image.</p>
+  <p class="mt-3">The <code>-extract</code> option is useful when retrieving an image. To extract a portion of the image, specify tile width, height, and offset:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt -extract 100x100+0+0 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png</code></pre>
+  <p class="mt-3">To resize instead, do not specify the offset:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png</code></pre>
+  <p class="mt-3">If your image is scrambled, provide the passphrase to descramble it:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt -passphrase passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png</code></pre>
+  <!-- Delete content from the MagickCache -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="delete">
+    <a class="anchor text-decoration-none text-body" href="#delete">Delete content from the MagickCache</a>
+  </h2>
+  <p>We can explicitly delete content:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt delete /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson</code></pre>
+  <p>or we can delete all cast images that have expired (exceeded their respective time to live), try this command:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt expire /opt/magick-cache movies/image/mission-impossible/cast</code></pre>
+  <!-- Identify the MagickCache content -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="identify">
+    <a class="anchor text-decoration-none text-body" href="#identify">Identify the MagickCache content</a>
+  </h2>
+  <p>Perhaps you want to identify all the content you own:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt identify /opt/magick-cache movies/image/mission-impossible/cast
+movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B 1:0:0:0 2021-05-30T17:41:42Z
+identified 1 resources</code></pre>
+  <p>Each entry includes the IRI, image dimensions for images, the content extent in bytes, time to live, whether the resource is expired (denoted with a <code>*</code>), and the creation date.</p>
+  <p class="mt-3">Others can store content in the cache alongside your content. However, their content is unavailable to you. You cannot get, identify, expire or delete content that you do not own as determined by your secret passkey.</p>
+  <p class="mt-3">The MagickCache owner can get, identify, expire, or delete all the content, including content you own, with this command, for example:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt identify /opt/magick-cache /</code></pre>
+  <p class="mb-4">Note, expired resources are annotated with an asterisk.</p>
+  <!-- MagickCache is not just for Images -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="other-content">
+    <a class="anchor text-decoration-none text-body" href="#other-content">MagickCache is not just for Images</a>
+  </h2>
+  <p>In addition to a type of <code>image</code>, you can store the image content in its original form, video, or audio as a content type of <code>blob</code> or metadata with a content type of <code>meta</code>:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.mp4</code></pre>
+  <p class="text-center fw-bold my-2">or</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt</code></pre>
+  <p class="mb-4">Images must be in a format that ImageMagick understands. Metadata must be text. Blobs can be any content including images, video, audio, or binary files.</p>
+  <!-- Delete a MagickCache -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="delete-cache">
+    <a class="anchor text-decoration-none text-body" href="#delete-cache">Delete a MagickCache</a>
+  </h2>
+  <p>The MagickCache owner can completely delete all the content within a cache:</p>
+  
+  <pre class="p-3 mb-3 rounded bg-body-tertiary border font-mono small"><code>$ magick-cache -passkey passkey.txt delete /opt/magick-cache /</code></pre>
+  <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center gap-2 mb-4" role="alert">
+    <i class="bi bi-exclamation-octagon-fill fs-5"></i>
+    <div>
+      <strong>Warning:</strong> Be careful, after this command, your cached content is irrevocably lost.
+    </div>
+  </div>
+  <!-- Security -->
+  <h2 class="fw-bold border-bottom pb-2 mb-4 mt-5" id="security">
+    <a class="anchor text-decoration-none text-body" href="#security">Security</a>
+  </h2>
+  <p class="mb-0">
+    MagickCache security is not cryptographically strong. Instead, it generates a unique hash for each resource ensuring the resource ID cannot be discovered. A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys. They are also accessible to anyone with sufficient privileges to access the MagickCache disk path.
+  </p>
+</div>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4">
+          <div class="sticky-top" style="top: 90px;">
+            <!-- Sponsor Card -->
+            <div class="card im-card mb-4 overflow-hidden border-0 bg-gradient bg-primary bg-opacity-10">
+              <div class="card-body p-4 text-center">
+                <img src="../image/wizard.jpg" alt="ImageMagick Wizard" class="rounded shadow mb-3 img-fluid" style="max-height: 200px;">
+                <h5 class="fw-bold">Support Open Source</h5>
+                <p class="small text-body-secondary mb-3">Help maintain and sustain ImageMagick development.</p>
+                <iframe src="https://github.com/sponsors/ImageMagick/button" title="Sponsor ImageMagick" height="35" width="114" class="border-0"></iframe>
+              </div>
+            </div>
+
+            <!-- Banner Ad Container -->
+            <div class="text-center p-2 mv-4 rounded border border-secondary-subtle bg-body-tertiary">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3129977114552745" crossorigin="anonymous"></script>
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3129977114552745"
+                   data-ad-slot="1083537442"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+
+            <!-- Quick Links Navigation -->
+            <div class="card im-card p-3 mb-4">
+              <h6 class="fw-bold text-uppercase fs-7 text-secondary mb-3">Resources</h6>
+              <ul class="nav flex-column gap-1 fs-6">
+                <li class="nav-item"><a href="../security-policy/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-shield-check me-2 text-success"></i> Security Policy</a></li>
+                <li class="nav-item"><a href="../license/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-file-earmark-text me-2 text-info"></i> Open Source License</a></li>
+                <li class="nav-item"><a href="../porting/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-signpost-split me-2 text-warning"></i> Porting v6 to v7</a></li>
+                <li class="nav-item"><a href="../formats/index.html" class="nav-link p-2 rounded text-body-secondary"><i class="bi bi-filetype-png me-2 text-danger"></i> Supported Formats</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="im-footer py-5 mt-auto">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <a class="navbar-brand im-brand mb-2 fs-5" href="../index-2.html">ImageMagick</a>
+          <p class="small text-secondary">Mastering Digital Image Alchemy. The open-source suite for image creation, conversion, and batch manipulation.</p>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="../download/index.html">Download</a></li>
+            <li><a href="../command-line-tools/index.html">Tools</a></li>
+            <li><a href="../develop/index.html">APIs & Libraries</a></li>
+            <li><a href="../sitemap/index.html">Sitemap</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+          <h6 class="text-light fw-bold mb-3">Community</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="https://github.com/ImageMagick/ImageMagick/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/ImageMagick/ImageMagick/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="../support/index.html">Sponsor Us</a></li>
+            <li><a href="../cite/index.html">Cite ImageMagick</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <h6 class="text-light fw-bold mb-3">Connect</h6>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://github.com/imagemagick/imagemagick" target="_blank" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://x.com/imagemagick" target="_blank" aria-label="X/Twitter"><i class="bi bi-twitter-x"></i></a>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">Copyright © 1999 ImageMagick Studio LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('theme', theme);
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const applied = theme === 'auto' ? (systemDark ? 'dark' : 'light') : theme;
+      document.documentElement.setAttribute('data-bs-theme', applied);
+    }
+  </script>
+  <div style="visibility: hidden;">
+    <div class="gcse-search"></div>
+  </div>
+</body>
+
+<!-- Mirrored from https://imagemagick.org/magick-cache/ by HTTrack Website Copier/3.x [XR&CO], Sun, 25 Oct 2026 15:23:43 GMT -->
+</html>

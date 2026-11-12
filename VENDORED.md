@@ -11,6 +11,7 @@ and examples removed. Build scripts and CMake files are kept intact.
 | `delegates/libpng/` | libpng | 1.6.59 | https://github.com/pnggroup/libpng/archive/refs/tags/v1.6.59.tar.gz |
 | `delegates/libjpeg-turbo/` | libjpeg-turbo | 3.2.1 | https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/3.2.1.tar.gz |
 | `delegates/libwebp/` | libwebp | 1.6.0 | https://github.com/webmproject/libwebp/archive/refs/tags/v1.6.0.tar.gz |
+| `delegates/libtiff/` | libtiff | 4.7.2 | https://download.osgeo.org/libtiff/tiff-4.7.2.tar.gz |
 
 ImageMagick needs its delegate libraries at build time; they are compiled
 first (zlib → libpng / libjpeg-turbo / libwebp) by `build.rs`, then ImageMagick
