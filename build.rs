@@ -19,12 +19,7 @@ fn prefix(out_dir: &str) -> PathBuf {
 }
 
 /// Configure + build a vendored CMake project and return its install prefix.
-fn cmake_project(
-    name: &str,
-    src: &str,
-    out_dir: &str,
-    defines: &[(&str, &str)],
-) -> PathBuf {
+fn cmake_project(name: &str, src: &str, out_dir: &str, defines: &[(&str, &str)]) -> PathBuf {
     let prefix = prefix(out_dir).join(name);
     let mut cfg = cmake::Config::new(src);
     cfg.out_dir(PathBuf::from(out_dir).join("cmake-build").join(name))
@@ -36,8 +31,11 @@ fn cmake_project(
         cfg.define(k, v);
     }
 
-    let install = cfg.build();
-    println!("cargo:rustc-link-search=native={}", prefix.join("lib").display());
+    let _install = cfg.build();
+    println!(
+        "cargo:rustc-link-search=native={}",
+        prefix.join("lib").display()
+    );
     // ld64 honors LC_LINKER_OPTION autolink hints embedded in the ImageMagick
     // objects and prefers .dylib over .a — make sure only static archives
     // remain so autolinks resolve to them.
@@ -57,7 +55,13 @@ fn build_vendored() {
         "zlib",
         "vendor/delegates/zlib",
         &out_dir,
-        &[("CMAKE_BUILD_TYPE", "Release"), ("CMAKE_POSITION_INDEPENDENT_CODE", "ON"), ("ZLIB_BUILD_TESTING", "OFF"), ("ZLIB_BUILD_EXAMPLES", "OFF"), ("ZLIB_BUILD_SHARED", "OFF")],
+        &[
+            ("CMAKE_BUILD_TYPE", "Release"),
+            ("CMAKE_POSITION_INDEPENDENT_CODE", "ON"),
+            ("ZLIB_BUILD_TESTING", "OFF"),
+            ("ZLIB_BUILD_EXAMPLES", "OFF"),
+            ("ZLIB_BUILD_SHARED", "OFF"),
+        ],
     );
 
     let png = cmake_project(
@@ -67,7 +71,10 @@ fn build_vendored() {
         &[
             ("CMAKE_BUILD_TYPE", "Release"),
             ("CMAKE_POSITION_INDEPENDENT_CODE", "ON"),
-            ("ZLIB_LIBRARY", zlib.join("lib").join("libz.a").to_str().unwrap()),
+            (
+                "ZLIB_LIBRARY",
+                zlib.join("lib").join("libz.a").to_str().unwrap(),
+            ),
             ("ZLIB_INCLUDE_DIR", zlib.join("include").to_str().unwrap()),
             ("PNG_SHARED", "OFF"),
             ("PNG_TESTS", "OFF"),
@@ -108,7 +115,7 @@ fn build_vendored() {
             ("WEBP_BUILD_WEBPINFO", "OFF"),
             ("WEBP_BUILD_WEBPQAQ", "OFF"),
             ("WEBP_BUILD_WEBPMUX", "OFF"),
-            ("WEBP_BUILD_LIBWEBPMUX", "OFF"),
+            ("WEBP_BUILD_LIBWEBPMUX", "ON"),
         ],
     );
 
@@ -128,7 +135,10 @@ fn build_vendored() {
             ("jpeg-includes", jpeg.join("include").to_str().unwrap()),
             ("zlib", "ON"),
             ("zlib-includes", zlib.join("include").to_str().unwrap()),
-            ("zlib-library", zlib.join("lib").join("libz.a").to_str().unwrap()),
+            (
+                "zlib-library",
+                zlib.join("lib").join("libz.a").to_str().unwrap(),
+            ),
             ("lzma", "OFF"),
             ("webp", "OFF"),
             ("zstd", "OFF"),
@@ -141,9 +151,22 @@ fn build_vendored() {
     // ImageMagick 7.x has no CMake support — build via autotools against the
     // freshly compiled delegate libraries.
     let im_prefix = prefix(&out_dir).join("imagemagick");
-    build_imagemagick_autotools(&im_prefix, &out_dir, &[(&zlib, "libz.a"), (&png, "libpng16.a"), (&jpeg, "libjpeg.a"), (&webp, "libwebp.a"), (&tiff, "libtiff.a")]);
+    build_imagemagick_autotools(
+        &im_prefix,
+        &out_dir,
+        &[
+            (&zlib, "libz.a"),
+            (&png, "libpng16.a"),
+            (&jpeg, "libjpeg.a"),
+            (&webp, "libwebp.a"),
+            (&tiff, "libtiff.a"),
+        ],
+    );
 
-    println!("cargo:rustc-link-search=native={}", im_prefix.join("lib").display());
+    println!(
+        "cargo:rustc-link-search=native={}",
+        im_prefix.join("lib").display()
+    );
 
     // Link every static archive the ImageMagick build produced (naming
     // includes the version/quantum depth, e.g. libMagickCore-7.Q16HDRI.a).
@@ -154,10 +177,21 @@ fn build_vendored() {
     println!("cargo:rustc-link-lib=static=jpeg");
     println!("cargo:rustc-link-lib=static=webp");
     println!("cargo:rustc-link-lib=static=webpdemux");
+    println!("cargo:rustc-link-lib=static=webpmux");
+    println!("cargo:rustc-link-lib=static=sharpyuv");
     println!("cargo:rustc-link-lib=static=tiff");
 
     if let Some(inc) = find_im_include(&im_install) {
-        generate_bindings(&inc, &[&inc, &top.join("libjpeg-turbo").join("include").display().to_string()]);
+        generate_bindings(
+            &inc,
+            &[
+                &inc,
+                &top.join("libjpeg-turbo")
+                    .join("include")
+                    .display()
+                    .to_string(),
+            ],
+        );
     } else {
         panic!("ImageMagick install dir has no include/ directory");
     }
@@ -187,7 +221,9 @@ fn build_imagemagick_autotools(
     use std::process::Command;
 
     let src = std::fs::canonicalize("vendor/ImageMagick").expect("vendor/ImageMagick missing");
-    let build_dir = PathBuf::from(out_dir).join("autotools-build").join("imagemagick");
+    let build_dir = PathBuf::from(out_dir)
+        .join("autotools-build")
+        .join("imagemagick");
     std::fs::create_dir_all(&build_dir).expect("cannot create autotools build dir");
 
     let mut include_dirs = Vec::new();
@@ -233,6 +269,7 @@ fn build_imagemagick_autotools(
             .arg("--without-raqm")
             .arg("--without-flif")
             .arg("--without-openexr")
+            .arg("--without-jxl")
             .arg("--disable-docs")
             .env("CC", std::env::var("CC").unwrap_or_else(|_| "cc".into()))
             .env("CFLAGS", cflags)
@@ -242,7 +279,9 @@ fn build_imagemagick_autotools(
         run(cmd, "configure");
     }
 
-    let jobs = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4);
+    let jobs = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(4);
     run(
         {
             let mut c = Command::new("make");
@@ -262,7 +301,9 @@ fn build_imagemagick_autotools(
 }
 
 fn run(mut cmd: std::process::Command, what: &str) {
-    let status = cmd.status().unwrap_or_else(|e| panic!("failed to spawn {what}: {e}"));
+    let status = cmd
+        .status()
+        .unwrap_or_else(|e| panic!("failed to spawn {what}: {e}"));
     if !status.success() {
         panic!("{what} failed with status {status}");
     }
@@ -306,7 +347,7 @@ fn generate_bindings(header_dir: &str, include_dirs: &[&str]) {
         // match the configured build (Q16HDRI by default).
         .clang_arg("-DMAGICKCORE_HDRI_ENABLE=1")
         .clang_arg("-DMAGICKCORE_QUANTUM_DEPTH=16")
-        .allowlist_function("Magick.*")
+        .allowlist_function("Magick.*|New.*Wand|Destroy.*Wand|Clone.*Wand|Pixel.*|IsMagickWand|ClearMagickException")
         .allowlist_type("Magick.*|.*Wand.*|DrawInfo|ImageInfo|ExceptionInfo")
         .allowlist_var("Magick.*")
         .derive_default(true);
@@ -333,5 +374,11 @@ fn build_system() {
     if !header.exists() {
         panic!("MagickWand.h not found under {}", inc_str);
     }
-    generate_bindings(inc_str, &pc.include_paths.iter().map(|p| p.to_str().unwrap()).collect::<Vec<_>>());
+    generate_bindings(
+        inc_str,
+        &pc.include_paths
+            .iter()
+            .map(|p| p.to_str().unwrap())
+            .collect::<Vec<_>>(),
+    );
 }
