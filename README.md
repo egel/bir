@@ -38,6 +38,7 @@ Options:
   -o, --output-dir <OUTPUT_DIR>    Output directory (default: alongside originals); source subfolders are mirrored inside it
   -q, --quality <QUALITY>          Quality for lossy formats (0-100)
       --force                      Overwrite existing outputs
+  -j, --jobs <JOBS>                Number of parallel workers (default: all CPU cores)
       --no-recursive               Process only the top directory
   -h, --help                       Print help
   -V, --version                    Print version

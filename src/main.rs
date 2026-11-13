@@ -6,6 +6,7 @@ use clap::Parser;
 
 use bir::discover;
 use bir::imaging::{self, OutputSpec};
+use rayon::prelude::*;
 
 /// Bir - bulk image resizer.
 ///
@@ -38,6 +39,10 @@ struct Cli {
     #[arg(long)]
     force: bool,
 
+    /// Number of parallel worker threads (default: number of CPU cores).
+    #[arg(short = 'j', long)]
+    jobs: Option<usize>,
+
     /// Process only the top directory, not subdirectories.
     #[arg(long = "no-recursive", default_value_t = true, action = clap::ArgAction::SetFalse)]
     recursive: bool,
@@ -47,6 +52,13 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     imaging::ensure_genesis();
 
+    if let Some(jobs) = cli.jobs {
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(jobs)
+            .build_global()
+            .context("failed to configure the thread pool")?;
+    }
+
     let files = discover::find_images(&cli.input_dir, &cli.resolutions, cli.recursive)?;
     println!(
         "Found {} source image(s) in {}",
@@ -54,9 +66,14 @@ fn main() -> Result<()> {
         cli.input_dir.display()
     );
 
-    let mut created = 0u32;
+    /// One pending output: source file plus its destination spec.
+    struct Job {
+        input: PathBuf,
+        spec: OutputSpec,
+    }
+
+    let mut jobs = Vec::new();
     let mut skipped = 0u32;
-    let mut failed = 0u32;
 
     for file in &files {
         for size in &cli.resolutions {
@@ -74,15 +91,35 @@ fn main() -> Result<()> {
                 })?;
             }
 
-            match imaging::resize_file(file, &spec) {
-                Ok(()) => {
-                    println!("Resized: {} -> {}", file.display(), spec.path.display());
-                    created += 1;
-                }
-                Err(err) => {
-                    eprintln!("Failed:  {err}");
-                    failed += 1;
-                }
+            jobs.push(Job {
+                input: file.clone(),
+                spec,
+            });
+        }
+    }
+
+    let results: Vec<(usize, Result<(), imaging::ImagingError>)> = jobs
+        .par_iter()
+        .enumerate()
+        .map(|(i, job)| (i, imaging::resize_file(&job.input, &job.spec)))
+        .collect();
+
+    let mut created = 0u32;
+    let mut failed = 0u32;
+    for (i, result) in results {
+        let job = &jobs[i];
+        match result {
+            Ok(()) => {
+                println!(
+                    "Resized: {} -> {}",
+                    job.input.display(),
+                    job.spec.path.display()
+                );
+                created += 1;
+            }
+            Err(err) => {
+                eprintln!("Failed:  {err}");
+                failed += 1;
             }
         }
     }
