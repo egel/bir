@@ -26,6 +26,7 @@ struct Cli {
     format: Option<String>,
 
     /// Output directory (default: alongside originals). Created if missing.
+    /// The source's subfolder structure is mirrored inside it.
     #[arg(short, long)]
     output_dir: Option<PathBuf>,
 
@@ -59,7 +60,7 @@ fn main() -> Result<()> {
 
     for file in &files {
         for size in &cli.resolutions {
-            let spec = build_output_spec(file, *size, &cli);
+            let spec = build_output_spec(&cli.input_dir, file, *size, &cli);
 
             if spec.path.exists() && !cli.force {
                 eprintln!("Skipping (exists): {}", spec.path.display());
@@ -97,9 +98,11 @@ fn main() -> Result<()> {
 /// Compute the destination path and conversion settings for one output.
 ///
 /// Naming mirrors `bir.sh`: `<stem>_x<size>.<ext>` next to the original, or
-/// inside `--output-dir` when given. The extension is `--format` when set,
+/// inside `--output-dir` when given — where the source's subfolder structure
+/// (relative to the scan root) is mirrored. Files outside the scan root fall
+/// back to the flat output directory. The extension is `--format` when set,
 /// otherwise the original file's extension.
-fn build_output_spec(input: &Path, size: u32, cli: &Cli) -> OutputSpec {
+fn build_output_spec(root: &Path, input: &Path, size: u32, cli: &Cli) -> OutputSpec {
     let stem = input
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
@@ -112,10 +115,17 @@ fn build_output_spec(input: &Path, size: u32, cli: &Cli) -> OutputSpec {
             .unwrap_or_else(|| "png".to_string())
     });
 
-    let dir = cli
-        .output_dir
-        .clone()
-        .unwrap_or_else(|| input.parent().map(Path::to_path_buf).unwrap_or_default());
+    let dir = match &cli.output_dir {
+        Some(out) => {
+            let rel = input
+                .strip_prefix(root)
+                .unwrap_or(input)
+                .parent()
+                .unwrap_or_else(|| Path::new(""));
+            out.join(rel)
+        }
+        None => input.parent().map(Path::to_path_buf).unwrap_or_default(),
+    };
 
     OutputSpec {
         size,

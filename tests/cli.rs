@@ -103,6 +103,72 @@ fn output_dir_and_format_conversion() {
 }
 
 #[test]
+fn output_dir_mirrors_source_structure() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-6-{}", std::process::id()));
+    let out = std::env::temp_dir().join(format!("bir-cli-6-out-{}", std::process::id()));
+    let _ = (std::fs::remove_dir_all(&dir), std::fs::remove_dir_all(&out));
+    make_images(&dir, &[("photo.png", 400, 300)]);
+    make_images(&dir.join("photos"), &[("cat.png", 200, 200)]);
+
+    let res = run_bir(&[
+        dir.to_str().unwrap(),
+        "-r",
+        "100",
+        "-o",
+        out.to_str().unwrap(),
+    ]);
+    assert_eq!(
+        code(&res),
+        0,
+        "stderr: {}",
+        String::from_utf8_lossy(&res.stderr)
+    );
+
+    // root-level file -> output root; nested file -> mirrored subfolder
+    assert!(out.join("photo_x100.png").exists());
+    let nested = out.join("photos").join("cat_x100.png");
+    assert!(nested.exists(), "{} missing", nested.display());
+    let (w, h) = imaging::image_dimensions(&nested).unwrap();
+    assert_eq!((w, h), (100, 100));
+
+    // nothing written flat in the output root for the nested source
+    assert!(!out.join("cat_x100.png").exists());
+}
+
+#[test]
+fn output_dir_mirrored_outputs_skipped_then_forced() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-7-{}", std::process::id()));
+    let out = std::env::temp_dir().join(format!("bir-cli-7-out-{}", std::process::id()));
+    let _ = (std::fs::remove_dir_all(&dir), std::fs::remove_dir_all(&out));
+    make_images(&dir, &[("photo.png", 400, 300)]);
+    make_images(&dir.join("sub"), &[("deep.png", 200, 100)]);
+
+    let args = [
+        dir.to_str().unwrap(),
+        "-r",
+        "100",
+        "-o",
+        out.to_str().unwrap(),
+    ];
+    let first = run_bir(&args);
+    assert_eq!(code(&first), 0);
+    assert!(out.join("sub").join("deep_x100.png").exists());
+
+    // second run: mirrored outputs are detected and skipped
+    let second = run_bir(&args);
+    assert_eq!(code(&second), 0);
+    let stdout = String::from_utf8_lossy(&second.stdout);
+    assert!(stdout.contains("2 skipped"), "stdout: {stdout}");
+    assert!(stdout.contains("0 created"), "stdout: {stdout}");
+
+    // forced rerun recreates them
+    let forced = run_bir(&[args.as_slice(), &["--force"]].concat());
+    assert_eq!(code(&forced), 0);
+    let stdout = String::from_utf8_lossy(&forced.stdout);
+    assert!(stdout.contains("2 created"), "stdout: {stdout}");
+}
+
+#[test]
 fn missing_dir_and_empty_dir_exit_nonzero() {
     let out = run_bir(&["/definitely/not/here"]);
     assert_ne!(code(&out), 0);

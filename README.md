@@ -16,7 +16,10 @@ scaled by their longest side. It is a native Rust rewrite of the original
 - Recursive directory traversal (opt out with `--no-recursive`).
 - Format conversion: PNG, JPEG, WebP, TIFF, BMP inputs; PNG/JPEG/WebP/TIFF
   outputs.
-- Configurable output directory and quality for lossy formats.
+- Configurable output directory and quality for lossy formats. When
+  `--output-dir` is used, the source's subfolder structure is mirrored inside
+  it (e.g. `photos/cats/mia.png` becomes `out/cats/mia_x400.webp`); without
+  it, outputs are written next to each original.
 - Skips outputs of previous runs (`<stem>_x<N>.<ext>`, plus the legacy
   width-based `<stem>_w<N>.<ext>`) so the command is idempotent; `--force`
   overwrites.
@@ -32,7 +35,7 @@ Arguments:
 Options:
   -r, --resolutions <RESOLUTIONS>  Comma-separated target sizes for the longest side [default: 200,400,800]
   -f, --format <FORMAT>            Convert images to this format (default: keep original)
-  -o, --output-dir <OUTPUT_DIR>    Output directory (default: alongside originals)
+  -o, --output-dir <OUTPUT_DIR>    Output directory (default: alongside originals); source subfolders are mirrored inside it
   -q, --quality <QUALITY>          Quality for lossy formats (0-100)
       --force                      Overwrite existing outputs
       --no-recursive               Process only the top directory
@@ -55,6 +58,14 @@ bir ./photos --no-recursive --force
 
 Outputs are named `<stem>_x<size>.<ext>`, e.g. `photo_x400.webp` — the size
 always refers to the longest side, whether the image is landscape or portrait.
+With `--output-dir`, the subfolder layout under the input directory is
+recreated inside the output directory:
+
+```sh
+bir ./photos -r 400 -o ./out
+# photos/cats/mia.png  -> out/cats/mia_x400.png
+# photos/dog.jpg       -> out/dog_x400.jpg
+```
 Files whose name already ends in `_x<N>` (or the legacy width-based `_w<N>`)
 for one of the configured sizes are treated as previous outputs and skipped
 during discovery.
