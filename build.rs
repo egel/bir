@@ -37,7 +37,7 @@ fn cmake_project(name: &str, src: &str, out_dir: &str, defines: &[(&str, &str)])
         prefix.join("lib").display()
     );
     // ld64 honors LC_LINKER_OPTION autolink hints embedded in the ImageMagick
-    // objects and prefers .dylib over .a — make sure only static archives
+    // objects and prefers .dylib over .a, so make sure only static archives
     // remain so autolinks resolve to them.
     for entry in std::fs::read_dir(prefix.join("lib")).expect("lib dir missing") {
         let p = entry.expect("lib entry").path();
@@ -148,7 +148,7 @@ fn build_vendored() {
         ],
     );
 
-    // ImageMagick 7.x has no CMake support — build via autotools against the
+    // ImageMagick 7.x has no CMake support, so build via autotools against the
     // freshly compiled delegate libraries.
     let im_prefix = prefix(&out_dir).join("imagemagick");
     build_imagemagick_autotools(
@@ -197,7 +197,7 @@ fn build_vendored() {
     }
 }
 
-/// ImageMagick installs its headers under include/ImageMagick-7/ — locate it.
+/// ImageMagick installs its headers under include/ImageMagick-7/, so locate it.
 fn find_im_include(im_install: &std::path::Path) -> Option<String> {
     let inc_root = im_install.join("include");
     let mut dirs: Vec<PathBuf> = std::fs::read_dir(&inc_root)

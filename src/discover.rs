@@ -26,7 +26,7 @@ pub enum DiscoverError {
 /// Find source images in `dir` that should be resized to the given sizes.
 ///
 /// A file is excluded when its stem ends in `_x<N>` or the legacy `_w<N>` for
-/// any of the configured `sizes` — those are outputs of previous runs,
+/// any of the configured `sizes`. Those are outputs of previous runs,
 /// regardless of their extension (so e.g. `photo_x200.webp` is skipped even
 /// when the source extension filter is jpg/png only).
 pub fn find_images(
@@ -129,8 +129,8 @@ mod tests {
         touch(&dir, "photo_x400.jpg");
         touch(&dir, "photo_x800.jpg");
         touch(&dir, "photo_x200.webp");
-        touch(&dir, "photo_w200.jpg"); // legacy width-based output — skipped
-        touch(&dir, "photo_x999.jpg"); // not a configured size — kept
+        touch(&dir, "photo_w200.jpg"); // legacy width-based output, skipped
+        touch(&dir, "photo_x999.jpg"); // not a configured size, kept
 
         let found = find_images(&dir, &[200, 400, 800], true).unwrap();
         let names: Vec<String> = found

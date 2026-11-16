@@ -178,7 +178,7 @@ fn init_logging(multi: MultiProgress, verbose: bool) {
 /// Compute the destination path and conversion settings for one output.
 ///
 /// Naming mirrors `bir.sh`: `<stem>_x<size>.<ext>` next to the original, or
-/// inside `--output-dir` when given — where the source's subfolder structure
+/// inside `--output-dir` when given, where the source's subfolder structure
 /// (relative to the scan root) is mirrored. Files outside the scan root fall
 /// back to the flat output directory. The extension is `--format` when set,
 /// otherwise the original file's extension.
