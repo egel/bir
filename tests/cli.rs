@@ -207,3 +207,40 @@ fn previous_run_outputs_are_not_sources() {
     // configured-size outputs are still produced for the real source
     assert!(dir.join("real_x200.png").exists());
 }
+
+fn run_streams(args: &[&str]) -> Output {
+    let exe = env!("CARGO_BIN_EXE_bir");
+    Command::new(exe).args(args).output().expect("failed to spawn bir")
+}
+
+#[test]
+fn verbose_prints_per_file_results() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-8-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    make_images(&dir, &[("photo.png", 400, 300)]);
+
+    // Default mode: no per-file "Resized" lines anywhere.
+    let quiet = run_bir(&[dir.to_str().unwrap()]);
+    assert_eq!(code(&quiet), 0);
+    let combined = format!(
+        "{}{}",
+        String::from_utf8_lossy(&quiet.stdout),
+        String::from_utf8_lossy(&quiet.stderr)
+    );
+    assert!(!combined.contains("Resized:"), "quiet output: {combined}");
+
+    // Verbose mode: per-file "Resized" lines are printed.
+    let verbose = run_streams(&[dir.to_str().unwrap(), "--force", "--verbose"]);
+    assert_eq!(code(&verbose), 0);
+    let combined = format!(
+        "{}{}",
+        String::from_utf8_lossy(&verbose.stdout),
+        String::from_utf8_lossy(&verbose.stderr)
+    );
+    assert!(combined.contains("Resized:"), "verbose output: {combined}");
+    assert!(
+        combined.contains("photo.png ->"),
+        "verbose output: {combined}"
+    );
+}
+

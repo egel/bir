@@ -1,8 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU32, Ordering};
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use indicatif::{MultiProgress, ProgressBar, ProgressDrawTarget, ProgressStyle};
+use indicatif_log_bridge::LogWrapper;
+use log::LevelFilter;
 
 use bir::discover;
 use bir::imaging::{self, OutputSpec};
@@ -39,6 +43,10 @@ struct Cli {
     #[arg(long)]
     force: bool,
 
+    /// Print per-file results (Resized/Skipped lines).
+    #[arg(short, long)]
+    verbose: bool,
+
     /// Number of parallel worker threads (default: number of CPU cores).
     #[arg(short = 'j', long)]
     jobs: Option<usize>,
@@ -50,6 +58,8 @@ struct Cli {
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
+    let multi = MultiProgress::new();
+    init_logging(multi.clone(), cli.verbose);
     imaging::ensure_genesis();
 
     if let Some(jobs) = cli.jobs {
@@ -80,7 +90,7 @@ fn main() -> Result<()> {
             let spec = build_output_spec(&cli.input_dir, file, *size, &cli);
 
             if spec.path.exists() && !cli.force {
-                eprintln!("Skipping (exists): {}", spec.path.display());
+                log::info!("Skipping (exists): {}", spec.path.display());
                 skipped += 1;
                 continue;
             }
@@ -98,31 +108,45 @@ fn main() -> Result<()> {
         }
     }
 
-    let results: Vec<(usize, Result<(), imaging::ImagingError>)> = jobs
-        .par_iter()
-        .enumerate()
-        .map(|(i, job)| (i, imaging::resize_file(&job.input, &job.spec)))
-        .collect();
+    let bar = multi.add(ProgressBar::with_draw_target(
+        Some(jobs.len() as u64),
+        ProgressDrawTarget::stderr(),
+    ));
+    bar.set_style(
+        ProgressStyle::with_template(
+            "{spinner:.green} [{elapsed_precise}] [{bar:30.cyan/blue}] {pos}/{len} files ({eta})",
+        )
+        .expect("valid progress template")
+        .progress_chars("#>-"),
+    );
 
-    let mut created = 0u32;
-    let mut failed = 0u32;
-    for (i, result) in results {
-        let job = &jobs[i];
+    // Results are streamed: the bar updates as each file finishes, not after the batch.
+    let created = AtomicU32::new(0);
+    let failed = AtomicU32::new(0);
+
+    jobs.par_iter().for_each(|job| {
+        let result = imaging::resize_file(&job.input, &job.spec);
         match result {
             Ok(()) => {
-                println!(
+                log::info!(
                     "Resized: {} -> {}",
                     job.input.display(),
                     job.spec.path.display()
                 );
-                created += 1;
+                created.fetch_add(1, Ordering::Relaxed);
             }
             Err(err) => {
-                eprintln!("Failed:  {err}");
-                failed += 1;
+                log::error!("Failed:  {} -- {err}", job.input.display());
+                failed.fetch_add(1, Ordering::Relaxed);
             }
         }
-    }
+        bar.inc(1);
+    });
+
+    bar.finish();
+
+    let created = created.load(Ordering::Relaxed);
+    let failed = failed.load(Ordering::Relaxed);
 
     println!("Done: {created} created, {skipped} skipped, {failed} failed.");
 
@@ -130,6 +154,25 @@ fn main() -> Result<()> {
         anyhow::bail!("{failed} output(s) failed");
     }
     Ok(())
+}
+
+/// Initialize logging: per-file results with `--verbose`, errors and warnings only otherwise.
+/// Log lines are routed through the given `MultiProgress` (add every bar to it)
+/// so they don't smear over the progress bar.
+fn init_logging(multi: MultiProgress, verbose: bool) {
+    let level = if verbose {
+        LevelFilter::Info
+    } else {
+        LevelFilter::Warn
+    };
+    let logger = env_logger::Builder::new()
+        .filter_level(level)
+        .format_timestamp(None)
+        .build();
+    LogWrapper::new(multi, logger)
+        .try_init()
+        .expect("failed to init env_logger");
+    log::set_max_level(level);
 }
 
 /// Compute the destination path and conversion settings for one output.
