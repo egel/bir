@@ -130,6 +130,31 @@ fn convert_to_webp() {
 }
 
 #[test]
+fn convert_to_avif() {
+    imaging::ensure_genesis();
+    let dir = tmp_dir("convert-avif");
+    let input = dir.join("picture.png");
+    imaging::write_solid_image(&input, 200, 200).unwrap();
+
+    let output = dir.join("picture_x100.avif");
+    imaging::resize_file(
+        &input,
+        &OutputSpec {
+            size: 100,
+            path: output.clone(),
+            format: Some("avif".into()),
+            quality: Some(80),
+        },
+    )
+    .unwrap();
+
+    // No HEIF delegate is vendored, so ImageMagick cannot be used to read
+    // the result back; instead verify the AVIF file type box directly.
+    let bytes = std::fs::read(&output).unwrap();
+    assert_eq!(&bytes[4..12], b"ftypavif");
+}
+
+#[test]
 fn convert_jpeg_with_quality() {
     imaging::ensure_genesis();
     let dir = tmp_dir("convert-jpeg");

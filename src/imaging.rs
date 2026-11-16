@@ -11,7 +11,10 @@ use std::ffi::{CStr, CString, c_void};
 use std::path::{Path, PathBuf};
 use std::sync::Once;
 
+use ravif::RGBA8;
 use thiserror::Error;
+
+use crate::avif;
 
 include!(concat!(env!("OUT_DIR"), "/magickwand_bindings.rs"));
 
@@ -153,6 +156,13 @@ unsafe fn run_resize(
 /// Apply format/quality overrides and write the resized wand to `spec.path`.
 unsafe fn finish_write(wand: *mut MagickWand, spec: &OutputSpec) -> Result<(), ImagingError> {
     unsafe {
+        // AVIF output bypasses MagickWriteImage: there is no HEIF delegate
+        // library in the vendored build, so pixels are exported as raw RGBA
+        // and encoded by the `avif` module instead.
+        if spec.format.as_deref().is_some_and(avif::is_requested_format) {
+            return export_and_write_avif(wand, spec);
+        }
+
         if let Some(format) = &spec.format {
             let fmt = CString::new(format.as_str()).expect("format contained NUL");
             if MagickSetImageFormat(wand, fmt.as_ptr()) == MagickBooleanType_MagickFalse {
@@ -184,6 +194,44 @@ unsafe fn finish_write(wand: *mut MagickWand, spec: &OutputSpec) -> Result<(), I
             });
         }
         Ok(())
+    }
+}
+
+/// Export the current wand image as raw RGBA8 pixels and encode it to
+/// `spec.path` via the `avif` module. Falls back to opaque pixels when the
+/// image has no alpha channel.
+unsafe fn export_and_write_avif(
+    wand: *mut MagickWand,
+    spec: &OutputSpec,
+) -> Result<(), ImagingError> {
+    unsafe {
+        let width = MagickGetImageWidth(wand);
+        let height = MagickGetImageHeight(wand);
+        let mut rgba = vec![RGBA8 { r: 0, g: 0, b: 0, a: 0 }; width * height];
+
+        if MagickExportImagePixels(
+            wand,
+            0,
+            0,
+            width,
+            height,
+            c"RGBA".as_ptr(),
+            StorageType_CharPixel,
+            rgba.as_mut_ptr() as *mut c_void,
+        ) == MagickBooleanType_MagickFalse
+        {
+            return Err(ImagingError::Write {
+                path: spec.path.clone(),
+                message: take_exception(wand),
+            });
+        }
+
+        avif::encode_rgba_to_file(rgba, width, height, spec.quality, &spec.path).map_err(|e| {
+            ImagingError::Write {
+                path: spec.path.clone(),
+                message: e.to_string(),
+            }
+        })
     }
 }
 

@@ -19,7 +19,7 @@ external `magick` program is needed at build or runtime.
 | 📁 **Recursive**         | Walks entire directory trees; mirrors subfolder structure in the output                          |
 | 📊 **Progress bar**      | Live progress indicator during long batches                                                      |
 | 🖼️ **Smart resizing**    | Longest-side scaling, aspect ratio preserved, never upscales                                     |
-| 🔄 **Format conversion** | PNG/JPEG/WebP/TIFF/BMP in → PNG/JPEG/WebP/TIFF out                                               |
+| 🔄 **Format conversion** | PNG/JPEG/WebP/TIFF/BMP in → PNG/JPEG/WebP/TIFF/AVIF out                                |
 | 🎚️ **Quality control**   | Configurable quality for lossy formats                                                           |
 | 🔁 **Idempotent**        | Skips outputs of previous runs; re-running is always safe (`--force` to overwrite)               |
 | 📦 **Self-contained**    | Single ~5 MB binary with ImageMagick baked in, zero runtime dependencies                         |
@@ -53,6 +53,9 @@ That's the whole idea. More realistic examples:
 ```sh
 # Convert everything to WebP, longest side 1200 px, into ./out
 bir ./photos -r 1200 -f webp -o ./out -q 80
+
+# Convert everything to AVIF instead (encoded in pure Rust, no extra tools)
+bir ./photos -r 1200 -f avif -o ./out -q 80
 
 # Only the top directory, overwrite existing outputs
 bir ./photos --no-recursive --force
