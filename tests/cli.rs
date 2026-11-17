@@ -208,6 +208,69 @@ fn previous_run_outputs_are_not_sources() {
     assert!(dir.join("real_x200.png").exists());
 }
 
+#[test]
+fn single_file_input_resizes_in_place() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-9-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    make_images(&dir, &[("photo.png", 400, 300)]);
+
+    let file = dir.join("photo.png");
+    let out = run_bir(&[file.to_str().unwrap(), "-r", "100"]);
+    assert_eq!(
+        code(&out),
+        0,
+        "stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(dir.join("photo_x100.png").exists());
+}
+
+#[test]
+fn single_file_with_output_dir_writes_flat() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-10-{}", std::process::id()));
+    let out = std::env::temp_dir().join(format!("bir-cli-10-out-{}", std::process::id()));
+    let _ = (std::fs::remove_dir_all(&dir), std::fs::remove_dir_all(&out));
+    make_images(&dir, &[("photo.png", 400, 300)]);
+
+    let file = dir.join("photo.png");
+    let res = run_bir(&[
+        file.to_str().unwrap(),
+        "-r",
+        "100",
+        "-f",
+        "webp",
+        "-o",
+        out.to_str().unwrap(),
+    ]);
+    assert_eq!(
+        code(&res),
+        0,
+        "stderr: {}",
+        String::from_utf8_lossy(&res.stderr)
+    );
+    // directly in the output dir, no mirrored subfolder
+    let converted = out.join("photo_x100.webp");
+    assert!(converted.exists(), "{} missing", converted.display());
+    let (w, h) = imaging::image_dimensions(&converted).unwrap();
+    assert_eq!((w, h), (100, 75));
+}
+
+#[test]
+fn single_file_with_unsupported_extension_errors() {
+    let dir = std::env::temp_dir().join(format!("bir-cli-11-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(dir.join("notes.txt"), b"not an image").unwrap();
+
+    let out = run_bir(&[dir.join("notes.txt").to_str().unwrap()]);
+    assert_ne!(code(&out), 0);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("not a supported source image"),
+        "stderr: {stderr}"
+    );
+}
+
 fn run_streams(args: &[&str]) -> Output {
     let exe = env!("CARGO_BIN_EXE_bir");
     Command::new(exe).args(args).output().expect("failed to spawn bir")

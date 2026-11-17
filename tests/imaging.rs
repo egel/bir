@@ -26,6 +26,7 @@ fn resize_png_longest_side_landscape() {
             path: output.clone(),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap();
@@ -50,6 +51,7 @@ fn resize_png_longest_side_portrait() {
             path: output.clone(),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap();
@@ -73,6 +75,7 @@ fn no_upscale_for_small_images() {
             path: output.clone(),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap();
@@ -98,6 +101,7 @@ fn no_upscale_only_when_longest_side_is_smaller() {
             path: output.clone(),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap();
@@ -121,6 +125,7 @@ fn convert_to_webp() {
             path: output.clone(),
             format: Some("webp".into()),
             quality: Some(80),
+            watermark: None,
         },
     )
     .unwrap();
@@ -144,6 +149,7 @@ fn convert_to_avif() {
             path: output.clone(),
             format: Some("avif".into()),
             quality: Some(80),
+            watermark: None,
         },
     )
     .unwrap();
@@ -169,6 +175,7 @@ fn convert_jpeg_with_quality() {
             path: output.clone(),
             format: Some("jpeg".into()),
             quality: Some(75),
+            watermark: None,
         },
     )
     .unwrap();
@@ -190,6 +197,7 @@ fn missing_input_is_an_error() {
             path: dir.join("x_x200.png"),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap_err();
@@ -212,6 +220,7 @@ fn tiff_roundtrip() {
             path: output.clone(),
             format: None,
             quality: None,
+            watermark: None,
         },
     )
     .unwrap();

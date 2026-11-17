@@ -19,6 +19,11 @@ pub enum DiscoverError {
     NotADirectory { path: PathBuf },
     #[error("cannot walk '{path}': {message}")]
     Walk { path: PathBuf, message: String },
+    #[error("'{path}' does not exist")]
+    NotFound { path: PathBuf },
+    #[error("'{path}' is not a supported source image (expected one of: {})",
+        SOURCE_EXTENSIONS.join(", "))]
+    NotASourceImage { path: PathBuf },
     #[error("no source images found in '{path}'")]
     NoImages { path: PathBuf },
 }
@@ -63,6 +68,31 @@ pub fn find_images(
         });
     }
     Ok(files)
+}
+
+/// Validate a single-file input: it must be an existing file whose extension
+/// matches one of `SOURCE_EXTENSIONS` (case-insensitive).
+pub fn single_image(path: &Path) -> Result<Vec<PathBuf>, DiscoverError> {
+    if !path.exists() {
+        return Err(DiscoverError::NotFound {
+            path: path.to_path_buf(),
+        });
+    }
+    if !path.is_file() {
+        return Err(DiscoverError::NotADirectory {
+            path: path.to_path_buf(),
+        });
+    }
+    let ext = path
+        .extension()
+        .map(|e| e.to_string_lossy().to_ascii_lowercase())
+        .unwrap_or_default();
+    if !SOURCE_EXTENSIONS.contains(&ext.as_str()) {
+        return Err(DiscoverError::NotASourceImage {
+            path: path.to_path_buf(),
+        });
+    }
+    Ok(vec![path.to_path_buf()])
 }
 
 fn is_source_image(entry: &DirEntry, sizes: &[u32]) -> bool {
@@ -150,6 +180,25 @@ mod tests {
 
         assert_eq!(find_images(&dir, &[200], false).unwrap().len(), 1);
         assert_eq!(find_images(&dir, &[200], true).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn single_image_accepts_supported_files_only() {
+        let dir = std::env::temp_dir().join(format!("bir-disc-5-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let jpg = touch(&dir, "photo.JPG");
+        assert_eq!(single_image(&jpg).unwrap(), vec![jpg]);
+
+        let txt = touch(&dir, "notes.txt");
+        let err = single_image(&txt).unwrap_err();
+        assert!(matches!(err, DiscoverError::NotASourceImage { .. }));
+
+        let err = single_image(&dir.join("missing.jpg")).unwrap_err();
+        assert!(matches!(err, DiscoverError::NotFound { .. }));
+
+        let err = single_image(&dir).unwrap_err();
+        assert!(matches!(err, DiscoverError::NotADirectory { .. }));
     }
 
     #[test]

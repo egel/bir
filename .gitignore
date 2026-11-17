@@ -29,5 +29,7 @@ rustc-ice-*.txt
 /target
 
 
+.DS_Store
+
 ## Project specific
 tmp/

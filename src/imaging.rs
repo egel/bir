@@ -15,6 +15,7 @@ use ravif::RGBA8;
 use thiserror::Error;
 
 use crate::avif;
+use crate::watermark::{self, WatermarkOptions};
 
 include!(concat!(env!("OUT_DIR"), "/magickwand_bindings.rs"));
 
@@ -30,6 +31,8 @@ pub struct OutputSpec {
     pub format: Option<String>,
     /// Compression quality for lossy formats (0-100).
     pub quality: Option<u8>,
+    /// Optional watermark stamped onto the output before writing.
+    pub watermark: Option<WatermarkOptions>,
 }
 
 #[derive(Debug, Error)]
@@ -40,6 +43,8 @@ pub enum ImagingError {
     Resize { size: u32, message: String },
     #[error("cannot write {path}: {message}")]
     Write { path: PathBuf, message: String },
+    #[error("cannot apply watermark {path}: {message}")]
+    Watermark { path: PathBuf, message: String },
 }
 
 static GENESIS: Once = Once::new();
@@ -57,7 +62,7 @@ pub fn ensure_genesis() {
 pub fn shutdown() {}
 
 /// Retrieve and release the last exception message from a wand.
-unsafe fn take_exception(wand: *mut MagickWand) -> String {
+pub(crate) unsafe fn take_exception(wand: *mut MagickWand) -> String {
     let mut severity: ExceptionType = 0;
     let ptr = unsafe { MagickGetException(wand, &mut severity) };
     if ptr.is_null() {
@@ -123,6 +128,7 @@ unsafe fn run_resize(
 
         // No-upscale: `magick -resize <N>x<N>>` leaves smaller images untouched.
         if spec.size as usize >= src_width && spec.size as usize >= src_height {
+            apply_watermark(wand, spec)?;
             return finish_write(wand, spec);
         }
 
@@ -149,7 +155,16 @@ unsafe fn run_resize(
             });
         }
 
+        apply_watermark(wand, spec)?;
         finish_write(wand, spec)
+    }
+}
+
+/// Stamp the watermark onto the wand, when one is configured.
+unsafe fn apply_watermark(wand: *mut MagickWand, spec: &OutputSpec) -> Result<(), ImagingError> {
+    match &spec.watermark {
+        Some(options) => unsafe { watermark::apply(wand, options) },
+        None => Ok(()),
     }
 }
 
@@ -159,7 +174,11 @@ unsafe fn finish_write(wand: *mut MagickWand, spec: &OutputSpec) -> Result<(), I
         // AVIF output bypasses MagickWriteImage: there is no HEIF delegate
         // library in the vendored build, so pixels are exported as raw RGBA
         // and encoded by the `avif` module instead.
-        if spec.format.as_deref().is_some_and(avif::is_requested_format) {
+        if spec
+            .format
+            .as_deref()
+            .is_some_and(avif::is_requested_format)
+        {
             return export_and_write_avif(wand, spec);
         }
 
@@ -207,7 +226,15 @@ unsafe fn export_and_write_avif(
     unsafe {
         let width = MagickGetImageWidth(wand);
         let height = MagickGetImageHeight(wand);
-        let mut rgba = vec![RGBA8 { r: 0, g: 0, b: 0, a: 0 }; width * height];
+        let mut rgba = vec![
+            RGBA8 {
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 0
+            };
+            width * height
+        ];
 
         if MagickExportImagePixels(
             wand,
@@ -235,7 +262,7 @@ unsafe fn export_and_write_avif(
     }
 }
 
-fn path_to_cstring<E>(path: &Path, map: impl FnOnce(String) -> E) -> Result<CString, E> {
+pub(crate) fn path_to_cstring<E>(path: &Path, map: impl FnOnce(String) -> E) -> Result<CString, E> {
     let bad = |message: String| map(message);
     match path.to_str() {
         None => Err(bad(format!("path is not valid UTF-8: {}", path.display()))),
@@ -274,6 +301,17 @@ pub fn image_dimensions(path: &Path) -> Result<(usize, usize), ImagingError> {
 /// Create a solid-color image at `width` x `height` and write it to `path`
 /// in the format implied by the file extension. Used to generate test fixtures.
 pub fn write_solid_image(path: &Path, width: usize, height: usize) -> Result<(), ImagingError> {
+    write_solid_image_with_color(path, width, height, "white")
+}
+
+/// Like `write_solid_image`, but with an explicit color name (any value
+/// understood by `PixelSetColor`, e.g. "red").
+pub fn write_solid_image_with_color(
+    path: &Path,
+    width: usize,
+    height: usize,
+    color: &str,
+) -> Result<(), ImagingError> {
     ensure_genesis();
     let output_c = path_to_cstring(path, |e| ImagingError::Write {
         path: path.to_path_buf(),
@@ -288,7 +326,8 @@ pub fn write_solid_image(path: &Path, width: usize, height: usize) -> Result<(),
             });
         }
         let pixel = NewPixelWand();
-        PixelSetColor(pixel, c"white".as_ptr());
+        let color_c = CString::new(color).expect("color name contained NUL");
+        PixelSetColor(pixel, color_c.as_ptr());
         let result =
             match MagickNewImage(wand, width, height, pixel) == MagickBooleanType_MagickFalse {
                 true => Err(ImagingError::Write {

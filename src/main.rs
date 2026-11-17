@@ -10,6 +10,7 @@ use log::LevelFilter;
 
 use bir::discover;
 use bir::imaging::{self, OutputSpec};
+use bir::watermark::{Position, WatermarkOptions};
 use rayon::prelude::*;
 
 /// Bir - bulk image resizer.
@@ -19,7 +20,7 @@ use rayon::prelude::*;
 #[derive(Parser, Debug)]
 #[command(name = "bir", version, about)]
 struct Cli {
-    /// Directory containing the images to process.
+    /// Image file or directory containing the images to process.
     input_dir: PathBuf,
 
     /// Comma-separated target sizes for the longest side, e.g. 200,400,800.
@@ -38,6 +39,33 @@ struct Cli {
     /// Quality for lossy formats (0-100).
     #[arg(short, long, value_parser = clap::value_parser!(u8).range(0..=100))]
     quality: Option<u8>,
+
+    /// Overlay this image as a watermark on every output.
+    #[arg(long)]
+    watermark: Option<PathBuf>,
+
+    /// Anchor for the watermark: northwest, north, northeast, west, center,
+    /// east, southwest, south or southeast.
+    #[arg(long, value_enum)]
+    watermark_position: Option<Position>,
+
+    /// Tile the watermark over the whole image instead of placing it once.
+    #[arg(long, conflicts_with = "watermark_position")]
+    watermark_repeat: bool,
+
+    /// Gap between tiled watermarks as a percentage of the watermark width
+    /// (repeat mode only).
+    #[arg(long, default_value_t = 50, value_parser = clap::value_parser!(u32).range(0..=500))]
+    watermark_gap: u32,
+
+    /// Watermark opacity (0-100, default 100).
+    #[arg(long, default_value_t = 100, value_parser = clap::value_parser!(u8).range(0..=100))]
+    watermark_opacity: u8,
+
+    /// Tilt the watermark by this many degrees (-90 to 90, positive is
+    /// counter-clockwise).
+    #[arg(long, default_value_t = 0.0)]
+    watermark_angle: f64,
 
     /// Overwrite existing outputs (default: skip with a warning).
     #[arg(long)]
@@ -62,6 +90,13 @@ fn main() -> Result<()> {
     init_logging(multi.clone(), cli.verbose);
     imaging::ensure_genesis();
 
+    if !(-90.0..=90.0).contains(&cli.watermark_angle) {
+        anyhow::bail!(
+            "watermark angle {} is out of range (-90 to 90)",
+            cli.watermark_angle
+        );
+    }
+
     if let Some(jobs) = cli.jobs {
         rayon::ThreadPoolBuilder::new()
             .num_threads(jobs)
@@ -69,7 +104,11 @@ fn main() -> Result<()> {
             .context("failed to configure the thread pool")?;
     }
 
-    let files = discover::find_images(&cli.input_dir, &cli.resolutions, cli.recursive)?;
+    let files = if cli.input_dir.is_dir() {
+        discover::find_images(&cli.input_dir, &cli.resolutions, cli.recursive)?
+    } else {
+        discover::single_image(&cli.input_dir)?
+    };
     println!(
         "Found {} source image(s) in {}",
         files.len(),
@@ -85,9 +124,20 @@ fn main() -> Result<()> {
     let mut jobs = Vec::new();
     let mut skipped = 0u32;
 
+    // For a single-file input there is no subfolder structure to mirror, so
+    // the scan root is treated as the file's own directory.
+    let root = if cli.input_dir.is_dir() {
+        cli.input_dir.clone()
+    } else {
+        files[0]
+            .parent()
+            .map(Path::to_path_buf)
+            .unwrap_or_default()
+    };
+
     for file in &files {
         for size in &cli.resolutions {
-            let spec = build_output_spec(&cli.input_dir, file, *size, &cli);
+            let spec = build_output_spec(&root, file, *size, &cli);
 
             if spec.path.exists() && !cli.force {
                 log::info!("Skipping (exists): {}", spec.path.display());
@@ -212,5 +262,13 @@ fn build_output_spec(root: &Path, input: &Path, size: u32, cli: &Cli) -> OutputS
         path: dir.join(format!("{stem}_x{size}.{ext}")),
         format: cli.format.clone(),
         quality: cli.quality,
+        watermark: cli.watermark.clone().map(|path| WatermarkOptions {
+            path,
+            position: cli.watermark_position.unwrap_or(Position::SouthEast),
+            repeat: cli.watermark_repeat,
+            gap: cli.watermark_gap,
+            opacity: cli.watermark_opacity,
+            angle: cli.watermark_angle,
+        }),
     }
 }
